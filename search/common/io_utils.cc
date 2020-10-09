@@ -4,39 +4,56 @@
 #include <list> 
 #include <vector> 
 
-
+#include "../../utils/math_utils.h"
 
 using namespace std;
 
-int reverseInt (int i) {
-    unsigned char c1, c2, c3, c4;
+list<vector<double>> parse_input(string filename) {
+    // open the dataset
+    ifstream input(filename, ios::binary);
 
-    c1 = i & 255;
-    c2 = (i >> 8) & 255;
-    c3 = (i >> 16) & 255;
-    c4 = (i >> 24) & 255;
+    // create a list of vectors to return
+    list<vector<double>> list_of_vectors;
 
-    return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
-}
+    // read the magic number of the image
+    int magic_number = 0;
+    input.read((char*)&magic_number, sizeof(int));
+    magic_number = our_math::big_to_litte_endian(magic_number);
 
-void parse_input(string filename, list<vector<int>> list_of_vectors) {
-    char data[5];
-    ifstream input;
-    input.open(filename); //TODO: Might add ios::binary
-    if (input.is_open()) {
-        // read the magic number of the image
-        int magic_number = 0;
-        input.read((char*)&magic_number, sizeof(int));
-        magic_number = reverseInt(magic_number);
-        // find out how many images we are going to parse
-        int n_of_images;
-        input.read((char*)&n_of_images, sizeof(int));
-        n_of_images = reverseInt(n_of_images);
-        for 
+    // find out how many images we are going to parse
+    int n_of_images;
+    input.read((char*)&n_of_images, sizeof(int));
+    n_of_images = our_math::big_to_litte_endian(n_of_images);
+
+    // read the dimensions
+    int rows = 0;
+    input.read((char*)&rows, sizeof(int));
+    rows = our_math::big_to_litte_endian(rows);
+    int cols;
+    input.read((char*)&cols, sizeof(int));
+    cols = our_math::big_to_litte_endian(cols);
+
+    double x;
+    // for each image start filling the vectors
+    for (int i = 0; i < n_of_images; i++) {
+        // create a vector to store our image data
+        vector<double> vec(rows * cols);
+        // store each byte of the image in the vector, by parsing boh of the image's dimensions
+        for (int j = 0; j < rows; j++) {
+            for (int k = 0; k < cols; k++) {
+                // the pixels are from 0-255, so an unsinged char type is enough
+                unsigned char pixel = 0;
+                input.read((char*)(&pixel), sizeof(pixel));
+                // change its value to double
+                x = (double)pixel;
+                // push the byte into the vector
+                vec.push_back(x);
+            }
+        }
+        // push the vector in our list
+        list_of_vectors.push_front(vec);
     }
-}
 
-int main(void) {
-    list<vector<int>> list_of_vectors;
-    // parse_input("/home/nikos/Desktop/7th Semester/Software Development for Algorithmic Problems/Projects/Vectors-Similarity-Search/misc/datasets/train-images-idx3-ubyte");
+    // return the list of vectors that we created
+    return list_of_vectors;
 }

@@ -13,7 +13,7 @@ namespace our_math{
 		return (c < 0) ? c + b : c;
 	}
 	// Convert a number form big endian to little endian
-	int reverseInt(int i) {
+	int big_to_litte_endian(int i) {
 		unsigned char c1, c2, c3, c4;
 		c1 = i & 255;
 		c2 = (i >> 8) & 255;
