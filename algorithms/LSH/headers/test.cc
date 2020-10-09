@@ -13,10 +13,9 @@ int main(void) {
 
     // cout << instant.Hash(x) << endl;
 
-    lsh::AmplifiedHashFunction ampl(4, 5.0, 1000.0, (pow(2,16) - 5), pow(2,8), 4);
+    lsh::AmplifiedHashFunction ampl(4, 5.0, 1000.0, (pow(2,32) - 5), pow(2,8), 4);
 
-    cout << ampl.Hash(x) << endl;
-    //TODO what should it print ? bucket ?
+    cout <<  ampl.assign_to_bucket(ampl.hash(y)) << endl;
     return 0;
 
 }

@@ -22,4 +22,11 @@ namespace our_math{
 
 		return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
 	}
+	// Bitwise concatenate 2 integers
+	uint32_t bitwise_concat(uint16_t current, uint32_t next, int k) {
+		// we want to shift by 32/k
+		int shift_amount = 32 / k;
+
+		return (current << shift_amount) | next;
+	} 
 };
