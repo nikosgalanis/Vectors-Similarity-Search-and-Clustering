@@ -1,1 +1,4 @@
 .vscode/
+datasets/
+build/
+*.out

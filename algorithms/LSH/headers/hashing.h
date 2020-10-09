@@ -4,6 +4,7 @@
 #include <random>
 #include <string>
 #include <cmath>
+#include "../../../utils/math_utils.h"
 
 // TODO: Change when makefile
 // #include "../../metrics.h"
@@ -38,12 +39,12 @@ namespace lsh {
                 std::vector<int> a(dim, 0);
                 // compute the values of the vector a
                 for (int i = 0; i < dim; i++) {
-                    cout << x[i]-s[i] << endl;
                     a[i] = (int)floor((x[i] - s[i]) / (w * 1.0));
                 }
                 // compute the hash result of the vector x
                 for (int i = 0; i < dim; i++) {
-                    h += ((a[dim - i - 1] % M) * ((uint64_t)pow(m, i)) % M) % M;
+                    // each time apply a modulo operation
+                    h += our_math::modulo(our_math::modulo(a[dim - i - 1], M) * our_math::modulo((uint64_t)pow(m, i), M), M);
                 }
                 // return the position in the hash
                 return h % M;
