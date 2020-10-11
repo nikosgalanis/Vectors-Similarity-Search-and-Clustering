@@ -8,12 +8,9 @@
 
 using namespace std;
 
-list<vector<double>> parse_input(string filename) {
+vector<vector<double>> parse_input(string filename) {
     // open the dataset
     ifstream input(filename, ios::binary);
-
-    // create a list of vectors to return
-    list<vector<double>> list_of_vectors;
 
     // read the magic number of the image
     int magic_number = 0;
@@ -24,6 +21,9 @@ list<vector<double>> parse_input(string filename) {
     int n_of_images;
     input.read((char*)&n_of_images, sizeof(int));
     n_of_images = our_math::big_to_litte_endian(n_of_images);
+
+    // create a list of vectors to return
+    vector<vector<double>> list_of_vectors(n_of_images);
 
     // read the dimensions
     int rows = 0;
@@ -51,7 +51,7 @@ list<vector<double>> parse_input(string filename) {
             }
         }
         // push the vector in our list
-        list_of_vectors.push_front(vec);
+        list_of_vectors.push_back(vec);
     }
 
     // return the list of vectors that we created

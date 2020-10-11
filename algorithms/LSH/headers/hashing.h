@@ -18,14 +18,13 @@ namespace lsh {
 	class HashFunction {
 		private:
 			const int dim; // dimension of the space
-			const double radius; // radius of the range search
 			const double w; // real number, considerably grater than radius
 			std::vector<double> s; // real random vector, for hash comparison
 			const uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
 			const uint32_t M; // size of the hash table
 		public:
 			// class constructor
-			HashFunction(const int dim, const double radius, const double w, const uint32_t m, const uint32_t M) : dim(dim), radius(radius), w(w), m(m), M(M), s(dim, 0) {
+			HashFunction(const int dim, const double w, const uint32_t m, const uint32_t M) : dim(dim), w(w), m(m), M(M), s(dim, 0) {
 				// we want to use a uniform real distributor, thus we must initialize it
 				// we want to randomize the input each time
 				std::random_device mch;
@@ -61,17 +60,16 @@ namespace lsh {
 		private:
 			std::list<HashFunction> hlist;
 			const int dim; // dimension of the space
-			const double radius; // radius of the range search
 			const double w; // real number, considerably grater than radius
 			const uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
 			const uint32_t M; // size of the hash table
 			const int k; // number of HashFunctions used
 		public:
 			//class constructor
-			AmplifiedHashFunction(const int dim, const double radius, const double w, const uint32_t m, const uint32_t M, const int k) : dim(dim), radius(radius), w(w), m(m), M(M), k(k) {
+			AmplifiedHashFunction(const int dim, const double w, const uint32_t m, const uint32_t M, const int k) : dim(dim), w(w), m(m), M(M), k(k) {
 					// initialize the Hash Functions
 					for (int i = 0; i < k; i++) {
-						hlist.push_front(HashFunction(dim, radius, w, m, M));
+						hlist.push_front(HashFunction(dim, w, m, M));
 					}
 			};
 			//class destructor

@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "hashing.h"
+#include "lsh.h"
 
 using namespace std;
 
@@ -13,9 +14,9 @@ int main(void) {
 
     // cout << instant.Hash(x) << endl;
 
-    lsh::AmplifiedHashFunction ampl(4, 5.0, 1000.0, (pow(2,32) - 5), pow(2,8), 4);
+    // lsh::AmplifiedHashFunction ampl(4, 5.0, 1000.0, (pow(2,32) - 5), pow(2,8), 4);
 
-    cout <<  ampl.assign_to_bucket(ampl.hash(y)) << endl;
+    // cout <<  ampl.assign_to_bucket(ampl.hash(y)) << endl;
     return 0;
 
 }
