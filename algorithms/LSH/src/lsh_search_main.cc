@@ -69,5 +69,5 @@ int main(int argc, char* argv[]) {
     // vector<vector<float>> a;
     // a.push_back(x); a.push_back(y);
 
-    LSH<double> instant(2, (pow(2,32) - 5), pow(2,8), 2, 4, items.at(1).size(), items);
+    LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), items.size(), 4, items.at(1).size(), 10, items);
 }

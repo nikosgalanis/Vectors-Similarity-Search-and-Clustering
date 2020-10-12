@@ -44,12 +44,18 @@ namespace lsh {
 				std::vector<int> a(dim, 0);
 				// compute the values of the vector a
 				for (int i = 0; i < dim; i++) {
-					a[i] = (int)floor((x.at(i) - s.at(i)) / (w * 1.0));
+					a[i] = floor((x.at(i) - s.at(i)) / (w * 1.0));
+					// cout << "a " << a[i] << endl;
 				}
 				// compute the hash result of the vector x
 				for (int i = 0; i < dim; i++) {
 					// each time apply a modulo operation
-					h += our_math::modulo(our_math::modulo(a.at(dim - i - 1), M) * our_math::modulo((uint64_t)pow(m, i), M), M);
+					// cout << "h " << h << endl;
+
+					//TODO: Something is wrong here
+					// cout << "alpha " << (uint64_t)pow(m, i) << endl;
+					// h += our_math::modulo((a.at(dim - i - 1) * (uint64_t)pow(m, i)) ,  M);
+					h += our_math::modulo(our_math::modulo(a.at(dim - i - 1), M) * our_math::modular_power(m, i, M), M);
 				}
 				// return the position in the hash
 				return h % M;
@@ -92,7 +98,6 @@ namespace lsh {
 			uint32_t assign_to_bucket(std::vector<T> x) {
 				// use our own modulo function
 				int result = this->hash(x);
-				cout << our_math::modulo(result, (M / 8)) << endl;
 				return our_math::modulo(result, (M / 8));
 			}
 	};

@@ -12,6 +12,20 @@ namespace our_math{
   		
 		return (c < 0) ? c + b : c;
 	}
+
+	// executes the operation (x^y) mod p
+	int modular_power(int x, int y, int p) {
+		int res = 1;
+
+		x = x % p;
+		while (y > 0) {
+			if (y & 1)
+				res = (res * x) % p;
+			y = y >> 1;
+			x = (x * x) % p;
+		}
+		return res;
+	}
 	// Convert a number form big endian to little endian
 	int big_to_litte_endian(int i) {
 		unsigned char c1, c2, c3, c4;
