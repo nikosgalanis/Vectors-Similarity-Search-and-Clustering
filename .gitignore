@@ -1,5 +1,5 @@
 .vscode/
-datasets/
-querysets/
+misc/datasets/
+misc/querysets/
 build/
 *.out

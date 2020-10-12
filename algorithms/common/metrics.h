@@ -25,4 +25,4 @@ namespace metrics {
 		}
 		return sqrt(result);
 	}
-}
+};

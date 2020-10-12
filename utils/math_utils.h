@@ -1,7 +1,7 @@
 #pragma once
 
 /** 
- Mthematical functions that are usefull for our project
+ Mathematical functions that are usefull for our project
  and C++ does not offer (or offers under a different definition) 
  **/
 
