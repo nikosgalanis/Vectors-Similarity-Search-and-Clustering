@@ -22,7 +22,7 @@ class LSH {
         std::list<lsh::AmplifiedHashFunction> amplified_hash_fns;
 
         // vector of the hash tables used by LSH. We are just hashing an vector's index in order to save space
-        std::vector<std::unordered_map<int, int>> lsh_tables;
+        std::vector<std::unordered_multimap<int, int>> lsh_tables;
 
         // vector of the vectors given to us, stored here for convinience
         std::vector<std::vector<T>> feature_vectors;
@@ -42,9 +42,8 @@ class LSH {
                     for (int i = 0; i < L; i++) {
                         lsh::AmplifiedHashFunction ampl(space_dim, w, m, M, k);
                         // Insert each amplified hash fn into the apropriate list
-                        amplified_hash_fns.push_front(ampl);
+                        amplified_hash_fns.push_back(ampl);
                     }
-
                     // // initialize our local copy of all the vectors given to hash
                     // feature_vectors(init_vectors.begin(), init_vectors.end());
 
@@ -56,17 +55,19 @@ class LSH {
 				    for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
                     it != amplified_hash_fns.end(); it++) {
                         // initialize a hash table to map an index to a vector
-                        std::unordered_map<int, std::vector<T>> hash_table;
+                        std::unordered_multimap<int, int> hash_table;
                         // insert each vector in the i-th hash table
                         for (int n = 0; n < n_points; n++) {
                             // compute the bucket that the vector will be inserted
-                            int index = it->assign_to_bucket(it->hash(init_vectors.at(n)));
+                            int index = it->assign_to_bucket(init_vectors.at(n));
+                            vector <double> instant = init_vectors.at(n);
                             // hash its index
                             // TODO: We are hashing the index. Many things can go wrong here. be very carefull
-                            hash_table[index].push_back(n);
+                            std::pair<int, int> tuple (n,n);
+                            // hash_table.insert(index, n);
                         }
                         // insert the now full hash table to the vector of the hashes
-                        lsh_tables[i++] = hash_table;
+                        lsh_tables.push_back(hash_table);
                     }
                 };
                 

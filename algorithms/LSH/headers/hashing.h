@@ -86,10 +86,14 @@ namespace lsh {
 				// return the final random number
 				return concatenated;
 			}
+
+			template <typename T>
 			// assign a previously computed g function result to a bucket in our hashtable
-			uint32_t assign_to_bucket(int g_func_result) {
+			uint32_t assign_to_bucket(std::vector<T> x) {
 				// use our own modulo function
-				return our_math::modulo(g_func_result, (M / 8));
+				int result = this->hash(x);
+				cout << our_math::modulo(result, (M / 8)) << endl;
+				return our_math::modulo(result, (M / 8));
 			}
 	};
 }

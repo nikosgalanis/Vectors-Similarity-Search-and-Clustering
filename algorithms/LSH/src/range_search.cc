@@ -11,7 +11,7 @@
 using namespace std;
 
 template <typename T>
-list<vector<T>> LSH<T>::RangeSearch(vector<T> query_vector, double radius, int c) {
+list<vector<T>> LSH<T>::RangeSearch(vector<T> query_vector, double radius, int c = 1) {
 	list<vector<T>> result;
 
     for (int i = 0; i < L; i++) {
