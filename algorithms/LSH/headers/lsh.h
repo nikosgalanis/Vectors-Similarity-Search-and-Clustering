@@ -77,9 +77,9 @@ class LSH {
                         // insert each vector in the i-th hash table
                         for (int n = 0; n < n_points; n++) {
                             // compute the bucket that the vector will be inserted
-                            int index = it->assign_to_bucket(init_vectors.at(n));
+                            int index = it->assign_to_bucket(feature_vectors.at(n));
                             // insert the index of the vector in the correct bucket
-                            current_table[i].push_front(n);
+                            current_table[index].push_front(n);
                             // TODO: We are hashing the index. Many things can go wrong here. be very carefull
                         }
                     }
