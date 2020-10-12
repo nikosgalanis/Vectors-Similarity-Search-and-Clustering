@@ -16,11 +16,12 @@ vector<vector<double>> parse_input(string filename) {
     int magic_number = 0;
     input.read((char*)&magic_number, sizeof(int));
     magic_number = our_math::big_to_litte_endian(magic_number);
-
+    cout << magic_number << endl;
     // find out how many images we are going to parse
     int n_of_images;
     input.read((char*)&n_of_images, sizeof(int));
     n_of_images = our_math::big_to_litte_endian(n_of_images);
+    cout << n_of_images << endl;
 
     // create a list of vectors to return
     vector<vector<double>> list_of_vectors(n_of_images);
@@ -32,6 +33,7 @@ vector<vector<double>> parse_input(string filename) {
     int cols;
     input.read((char*)&cols, sizeof(int));
     cols = our_math::big_to_litte_endian(cols);
+    cout << rows << cols << endl;
 
     double x;
     // for each image start filling the vectors
@@ -56,4 +58,9 @@ vector<vector<double>> parse_input(string filename) {
 
     // return the list of vectors that we created
     return list_of_vectors;
+}
+
+
+int main(void) {
+    parse_input("../../misc/datasets/train-images-idx3-ubyte");
 }
