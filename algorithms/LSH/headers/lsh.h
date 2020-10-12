@@ -79,9 +79,10 @@ class LSH {
                             // compute the bucket that the vector will be inserted
                             int index = it->assign_to_bucket(feature_vectors.at(n));
                             // insert the index of the vector in the correct bucket
-                            current_table[index].push_front(n);
+                            lsh_tables.at(i)[index].push_back(n);
                             // TODO: We are hashing the index. Many things can go wrong here. be very carefull
                         }
+                        i++;
                     }
 
                     // lsh initialization done. print the time differenct
@@ -93,7 +94,7 @@ class LSH {
                 ~LSH() {};
 
                 // Search functions, each implemented in a differend file under `algorithms/LSH/src`
-                T NearestNerighbor(/**/); //TODO: Sofo
+                vector<T> NearestNeighbour(vector<T> query_vector); //TODO: Sofo
                 T NNearestNerighbor(/**/); //TODO
                 list<vector<T>> RangeSearch(vector<T> query_vector, double radius, int c);
 };
