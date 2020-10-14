@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <ctime>
+#include <utility>
 
 
 #include "hashing.h"
@@ -93,7 +94,8 @@ class LSH {
                 ~LSH() {};
 
                 // Search functions, each implemented in a differend file under `algorithms/LSH/src`
-                vector<T> NearestNeighbour(vector<T> query_vector); //TODO: Sofo
-                T NNearestNerighbor(/**/); //TODO
-                list<vector<T>> RangeSearch(vector<T> query_vector, double radius, int c);
+
+                std::pair<std::vector<T>,T> NearestNeighbour(std::vector<T> query_vector);
+                list<pair<vector<T>,T>> kNearestNeighbour(std::vector<T> query_vector, int k);
+                list<pair<vector<T>,T>> RangeSearch(vector<T> query_vector, double radius, int c);
 };

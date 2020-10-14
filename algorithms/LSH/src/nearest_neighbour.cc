@@ -4,6 +4,7 @@
 #include <list> 
 #include <vector> 
 #include <limits>
+#include <utility>
 
 
 #include "../../../utils/math_utils.h"
@@ -16,14 +17,17 @@ using namespace std;
 using namespace metrics;
 
 template <typename T>
-vector<T> LSH<T>::NearestNeighbour(vector<T> query_vector) {
-	
-    vector<T> b(space_dim);
+// function that implements NearestNeighbour
+pair<vector<T>,T> LSH<T>::NearestNeighbour(vector<T> query_vector) {	
+    
+	vector<T> b(space_dim);
     T distance_b = (T) INT_MAX;
 
 
     int i = 0;
     int visited = 0;
+
+	//Traverse the hash tables
     for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
         it != amplified_hash_fns.end(); it++) {
         // find the bucket that the query hashes into
@@ -32,7 +36,7 @@ vector<T> LSH<T>::NearestNeighbour(vector<T> query_vector) {
         // get all the indexes of the vectors in the bucket
         for (std::list<int>::iterator bucket_it = bucket.begin(); bucket_it != bucket.end(); bucket_it++) {
             // vector<T> curr_vector = feature_vectors.at(*bucket_it);
-            // visited++;
+            visited++;
             T distance =  ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
             if (distance < distance_b) {
                 b = feature_vectors.at(*bucket_it);
@@ -44,7 +48,9 @@ vector<T> LSH<T>::NearestNeighbour(vector<T> query_vector) {
         }
         i++;
     }
-    return b;
+
+	// return pair
+    return std::make_pair(b, distance_b);
 }   
 
 vector<vector<double>> parse_input(string filename) {
@@ -98,16 +104,20 @@ vector<vector<double>> parse_input(string filename) {
 
 
 int main(int argc, char* argv[]) {
-	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images.idx3-ubyte");
-	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images.idx3-ubyte");
+	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images-idx3-ubyte");
+	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images-idx3-ubyte");
 
 	vector<double> first = queries.at(2);
 	// vector<vector<float>> a;
 	// a.push_back(x); a.push_back(y);
 	LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), 1000, 4, items.at(1).size(), 10, items);
 	// list<vector<double>> result = instant.RangeSearch(first, 1.0, 1);
-    vector<double> result = instant.NearestNeighbour(first);
-	cout << "result size is " << result.size() << endl;
+    pair<vector<double>,double> result = instant.NearestNeighbour(first);
+	
+	print::vector_print(result.first);
+	cout << "Distance" << ' ' << result.second << endl;
 
-    print::vector_print(result);
+	//TODO memory check
+
+	return 0;
 }

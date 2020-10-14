@@ -46,7 +46,7 @@ namespace lsh {
 				for (int i = 0; i < dim; i++) {
 					a[i] = floor((x.at(i) - s.at(i)) / (w * 1.0));
 					// cout << x.at(i) << endl;
-					cout << "a " << a[i] << endl;
+					// cout << "a " << a[i] << endl;
 				}
 				// compute the hash result of the vector x
 				for (int i = 0; i < dim; i++) {

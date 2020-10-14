@@ -2,8 +2,10 @@
 #include <fstream>
 #include <string>
 #include <list> 
-#include <vector>
-#include <utility> 
+#include <vector> 
+#include <limits>
+#include <utility>
+
 
 #include "../../../utils/math_utils.h"
 #include "../headers/hashing.h"
@@ -11,41 +13,51 @@
 #include "../../common/metrics.h"
 #include "../../../utils/print_utils.h"
 
-
 using namespace std;
+using namespace metrics;
 
 template <typename T>
-list<pair<vector<T>,T>> LSH<T>::RangeSearch(vector<T> query_vector, double radius, int c) {
-	list<pair<vector<T>,T>> result;
+// function that implements NearestNeighbour
+list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(vector<T> query_vector, int k) {
+    
+    list<pair<vector<T>,T>> result;
+    T min_distance = (T) INT_MAX;
 
-	int i = 0;
-	int visited = 0;
-	// Traverse all the hash tables. aka 1 ... L
-	for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
-		it != amplified_hash_fns.end(); it++) {
-		// refer to the correct hash table in the vetor of hashes
-		// find the bucket that the query hashes into
-		int index = it->assign_to_bucket(query_vector);
-		// access that specific bucket
-		list<int> bucket = lsh_tables.at(i)[index];
-		// get all the indexes of the vectors in the bucket
-		for (std::list<int>::iterator bucket_it = bucket.begin(); bucket_it != bucket.end(); bucket_it++) {
-			// increase the visited items
-			visited++;
-			// calculate the distance between the selected vector and our query vector
-			T distance = metrics::ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
-			// if the distance is smaller than the radius, push it in our result list
-			if (distance < (T)(radius * c)) {
-				result.push_back(make_pair(feature_vectors.at(*bucket_it),distance));
-			}
-			// if (visited > 20 * L) {
-			//     return result;
-			// }
-		}
-		i++;
-	}
-	return result;
-}   
+    int i = 0;
+    int visited = 0;
+
+    //Traverse the hash tables
+    for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
+        it != amplified_hash_fns.end(); it++) {
+        // find the bucket that the query hashes into
+        int index = it->assign_to_bucket(query_vector);
+        list<int> bucket = lsh_tables.at(i)[index];
+        // get all the indexes of the vectors in the bucket
+        for (std::list<int>::iterator bucket_it = bucket.begin(); bucket_it != bucket.end(); bucket_it++) {
+            // vector<T> curr_vector = feature_vectors.at(*bucket_it);
+            visited++;
+            //distance between vectors
+            T distance =  ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
+            
+            if (result.size() < k) {
+
+                result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
+                if (distance < min_distance) {
+                    b = feature_vectors.at(*bucket_it);
+                    distance_b = distance;
+                }
+            } else if (result.size() < k) {
+
+            } else {
+
+            }
+            // if (visited > 10 * L) {
+            //     return b;
+            // }
+        }
+        i++;
+    }
+}
 
 vector<vector<double>> parse_input(string filename) {
 	// open the dataset
@@ -94,9 +106,6 @@ vector<vector<double>> parse_input(string filename) {
 	return list_of_vectors;
 }
 
-
-
-
 int main(int argc, char* argv[]) {
 	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images-idx3-ubyte");
 	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images-idx3-ubyte");
@@ -106,12 +115,13 @@ int main(int argc, char* argv[]) {
 	// a.push_back(x); a.push_back(y);
 
 	LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), 1000, 4, items.at(1).size(), 10, items);
-	list<pair<vector<double>,double>> result = instant.RangeSearch(first, 10000.0, 1);
-	cout << "size of list is " << result.size() << endl;
+	list<pair<vector<double>,double>> result = instant.kNearestNeighbour(first, 3);
+	cout << "result size is " << result.size() << endl;
 
-	//TODO print the vectors and distances to check them
 
-	//TODO memory check
+    //TODO print the vectors and distances to check them
 
-	return 0;
+    //TODO mem check
+
+    return 0;
 }
