@@ -45,16 +45,12 @@ namespace lsh {
 				// compute the values of the vector a
 				for (int i = 0; i < dim; i++) {
 					a[i] = floor((x.at(i) - s.at(i)) / (w * 1.0));
-					// cout << "a " << a[i] << endl;
+					// cout << x.at(i) << endl;
+					cout << "a " << a[i] << endl;
 				}
 				// compute the hash result of the vector x
 				for (int i = 0; i < dim; i++) {
 					// each time apply a modulo operation
-					// cout << "h " << h << endl;
-
-					//TODO: Something is wrong here
-					// cout << "alpha " << (uint64_t)pow(m, i) << endl;
-					// h += our_math::modulo((a.at(dim - i - 1) * (uint64_t)pow(m, i)) ,  M);
 					h += our_math::modulo(our_math::modulo(a.at(dim - i - 1), M) * our_math::modular_power(m, i, M), M);
 				}
 				// return the position in the hash

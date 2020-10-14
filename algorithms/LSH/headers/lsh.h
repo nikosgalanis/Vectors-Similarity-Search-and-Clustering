@@ -14,6 +14,7 @@ typedef std::vector<std::list<int>> lsh_hash_table;
 
 template <typename T>
 class LSH {
+    //TODO: W initialization??
     private:
         const uint32_t L; // number of hash tables used in LSH
         const uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
@@ -30,7 +31,6 @@ class LSH {
 
         // vector of the vectors given to us, stored here for convinience
         std::vector<std::vector<T>> feature_vectors;
-        // TODO: Initialize the feature vector
 
         public:
             // constructor of the LSH class
@@ -80,7 +80,6 @@ class LSH {
                             int index = it->assign_to_bucket(feature_vectors.at(n));
                             // insert the index of the vector in the correct bucket
                             lsh_tables.at(i)[index].push_back(n);
-                            // TODO: We are hashing the index. Many things can go wrong here. be very carefull
                         }
                         i++;
                     }
