@@ -18,10 +18,12 @@ using namespace metrics;
 
 template <typename T>
 // function that implements NearestNeighbour
-list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(vector<T> query_vector, int k) {
+list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, int k) {
     
     list<pair<vector<T>,T>> result;
-    T min_distance = (T) INT_MAX;
+
+    //the greatest of the k min distances
+    T kth_min_distance = (T) INT_MAX;
 
     int i = 0;
     int visited = 0;
@@ -39,24 +41,52 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(vector<T> query_vector, int k)
             //distance between vectors
             T distance =  ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
             
-            if (result.size() < k) {
+			//insert the pair into the list if it's distance is less than the kth_min
 
-                result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
-                if (distance < min_distance) {
-                    b = feature_vectors.at(*bucket_it);
-                    distance_b = distance;
+            if (result.size() > 0 && result.size() < k) {
+                // size < k so we just insert it
+				
+				if (distance >= kth_min_distance) {
+					//insert at back if distance > kth_min_distance
+					//kth_min_distance is the distance of the last element
+					kth_min_distance = distance;
+					result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
+				} else {
+					//iterate through the list to insert it in the right position
+					typename std::list<std::pair<std::vector<T>,T>>::iterator pair_it;
+					for ( pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+						if ( distance < pair_it->second) {
+							result.insert(pair_it, make_pair(feature_vectors.at(*bucket_it),distance));
+						}
+					}
+				}
+            } else if (result.size() > 0 && (result.size() == k)) {
+                //insert, pop the last, and make the kth_min the new last
+                if (distance < kth_min_distance) {
+                    //iterate through the list to insert it in the right position
+					for (typename std::list<pair<vector<T>,T>>::iterator pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+						if ( distance < pair_it->second) {
+							result.insert(pair_it, make_pair(feature_vectors.at(*bucket_it),distance));
+						}
+					}
+                    result.pop_back();
+					kth_min_distance = result.end()->second;
                 }
-            } else if (result.size() < k) {
-
+            } else if (result.size() == 0) {
+                // size is 0, insert 1st element
+                kth_min_distance = distance;
+                result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
             } else {
-
-            }
+				cout << "knearest problem" << endl;
+				exit(EXIT_FAILURE);
+			}
             // if (visited > 10 * L) {
             //     return b;
             // }
         }
         i++;
     }
+    return result;
 }
 
 vector<vector<double>> parse_input(string filename) {
