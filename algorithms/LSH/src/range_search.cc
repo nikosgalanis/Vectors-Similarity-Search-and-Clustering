@@ -15,7 +15,7 @@
 using namespace std;
 
 template <typename T>
-list<pair<vector<T>,T>> LSH<T>::RangeSearch(vector<T> query_vector, double radius, int c) {
+list<pair<int,T>> LSH<T>::RangeSearch(vector<T> query_vector, double radius, int c) {
 	list<pair<vector<T>,T>> result;
 
 	int i = 0;
@@ -36,7 +36,7 @@ list<pair<vector<T>,T>> LSH<T>::RangeSearch(vector<T> query_vector, double radiu
 			T distance = metrics::ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
 			// if the distance is smaller than the radius, push it in our result list
 			if (distance < (T)(radius * c)) {
-				result.push_back(make_pair(feature_vectors.at(*bucket_it),distance));
+				result.push_back(make_pair(bucket_it,distance));
 			}
 			// if (visited > 20 * L) {
 			//     return result;
@@ -97,21 +97,21 @@ vector<vector<double>> parse_input(string filename) {
 
 
 
-int main(int argc, char* argv[]) {
-	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images-idx3-ubyte");
-	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images-idx3-ubyte");
+// int main(int argc, char* argv[]) {
+// 	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images-idx3-ubyte");
+// 	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images-idx3-ubyte");
 
-	vector<double> first = queries.at(2);
-	// vector<vector<float>> a;
-	// a.push_back(x); a.push_back(y);
+// 	vector<double> first = queries.at(2);
+// 	// vector<vector<float>> a;
+// 	// a.push_back(x); a.push_back(y);
 
-	LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), 1000, 4, items.at(1).size(), 10, items);
-	list<pair<vector<double>,double>> result = instant.RangeSearch(first, 10000.0, 1);
-	cout << "size of list is " << result.size() << endl;
+// 	LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), 1000, 4, items.at(1).size(), 10, items);
+// 	list<pair<int,double>> result = instant.RangeSearch(first, 10000.0, 1);
+// 	cout << "size of list is " << result.size() << endl;
 
-	//TODO print the vectors and distances to check them
+// 	//TODO print the vectors and distances to check them
 
-	//TODO memory check
+// 	//TODO memory check
 
-	return 0;
-}
+// 	return 0;
+// }

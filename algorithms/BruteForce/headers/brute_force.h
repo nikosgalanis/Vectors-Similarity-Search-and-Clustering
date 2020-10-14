@@ -29,12 +29,12 @@ class BruteForce {
 		space_dim(space_dim), feature_vectors(init_vectors){};
 
 		// run the brute force algorithm to find the nearest neighbor
-		std::pair<std::vector<T>,T> RunBruteForce(std::vector<T> query) {
+		std::pair<int,T> RunBruteForce(std::vector<T> query) { //TODO: Add k
 			// initialize the minimum distance and the result vector index
 			T min_distance = (T)INT_MAX;
 			int result_vector_index = -1;
 			// run through all of the dataset points
-			for (int i = 0; i < n_points; i++) {
+			for (uint32_t i = 0; i < n_points; i++) {
 				// compute each vector's distance form the query vector
 				T distance = metrics::ManhatanDistance(feature_vectors.at(i), query, space_dim);
 				// if its minimum
@@ -47,7 +47,7 @@ class BruteForce {
 			assert(result_vector_index > 0);
 			std::cout << result_vector_index << std::endl;
 			// return a pair of the vector and its distance from the query
-			return std::make_pair(feature_vectors.at(result_vector_index), min_distance); 
+			return std::make_pair(result_vector_index, min_distance); 
 		}
 		~BruteForce(){};
 };
