@@ -57,6 +57,7 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, i
 					for ( pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
 						if ( distance < pair_it->second) {
 							result.insert(pair_it, make_pair(feature_vectors.at(*bucket_it),distance));
+							break;
 						}
 					}
 				}
@@ -67,6 +68,7 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, i
 					for (typename std::list<pair<vector<T>,T>>::iterator pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
 						if ( distance < pair_it->second) {
 							result.insert(pair_it, make_pair(feature_vectors.at(*bucket_it),distance));
+							break;
 						}
 					}
                     result.pop_back();
@@ -77,6 +79,7 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, i
                 kth_min_distance = distance;
                 result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
             } else {
+				cout << "size " << result.size() << endl;
 				cout << "knearest problem" << endl;
 				exit(EXIT_FAILURE);
 			}
