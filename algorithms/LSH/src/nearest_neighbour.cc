@@ -39,8 +39,7 @@ pair<int,T> LSH<T>::NearestNeighbour(vector<T> query_vector) {
             visited++;
             T distance =  ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
             if (distance < distance_b) {
-                b = feature_vectors.at(*bucket_it);
-				vector_index = visited % i; //TODO: Almost certainly wrong
+                vector_index = *bucket_it; //TODO: Almost certainly wrong
                 distance_b = distance;
             }
             // if (visited > 10 * L) {
