@@ -2,9 +2,9 @@
 
 include lsh.mk
 
-include hypercube.mk
+# include hypercube.mk
 
-include clustering.mk
+# include clustering.mk
 
 lsh:
 

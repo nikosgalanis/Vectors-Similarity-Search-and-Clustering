@@ -5,6 +5,7 @@
 #include <vector> 
 #include <cstring>
 #include <assert.h>
+#include <ctime>
 
 #include "../../utils/math_utils.h"
 #include "../common/io_utils.h"
@@ -20,31 +21,24 @@ int main(int argc, char* argv[]) {
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-d")) {
 			input_file = strdup(argv[++i]);
-			cout << "input" << input_file <<endl;
 		}
 		if (!strcmp(argv[i], "-q")) {
 			query_file = strdup(argv[++i]);
-			cout << "query" << query_file <<endl;
 		}	
 		if (!strcmp(argv[i], "-o")) {
 			output_file = strdup(argv[++i]);
-			cout << "output" << output_file <<endl;
 		}
 		if (!strcmp(argv[i], "-k")) {
 			k = atoi(argv[++i]);
-			cout << "k" << k <<endl;
 		}
 		if (!strcmp(argv[i], "-L")) {
 			L = atoi(argv[++i]);
-			cout << "L" << L <<endl;
 		}
 		if (!strcmp(argv[i], "-N")) {
 			n_neighbors = atoi(argv[++i]);
-			cout << "nneigh" << n_neighbors <<endl;
 		}
 		if (!strcmp(argv[i], "-R")) {
 			radius = atoi(argv[++i]);
-			cout << "radius" << radius <<endl;
 		}
 	}
 	assert(input_file && query_file && output_file
@@ -79,29 +73,41 @@ int main(int argc, char* argv[]) {
 		// output the query number in the file
 		output << "Query: " << i << endl;
 
+		time_t knn_start, knn_finish, bf_start, bf_finish;
+
+		time(&knn_start);
 		// run the k-nearest neighbor algorithm, in order to obtain n neighbors
-		list<pair<int,double>> kNNs = lsh_instant.kNearestNeighbour(query_vectors.at(i), n_neighbors);
+		list<pair<int,double>> kNNs = lsh_instant.LSH::kNearestNeighbour(query_vectors.at(i), n_neighbors);
+		time(&knn_finish);
 		
+		time(&bf_start);
+		// run the brute force algorithm, in order to obtain the true nearest neighbors
+		list<pair<int, double>> kBF = bf_instant.kNeighboursBF(query_vectors.at(i), n_neighbors);
+		time(&bf_finish);
+
 		// denote the number of neighbor we are dealing with
 		int k_value = 0;
 
 		// itterate the list of results of the knn
-		for (list<pair<int,double>>::iterator it = kNNs.begin(); it != kNNs.end(); it++) {
-			// compute the real distance from the n-nth NN, using brute force
-			auto bf_tuple = bf_instant.RunBruteForce(query_vectors.at(i)); //TODO: Add K
+		list<pair<int,double>>::iterator knn_it = kNNs.begin();
+		list<pair<int,double>>::iterator bf_it = kBF.begin();
+
+		for (; knn_it != kNNs.end() && bf_it != kBF.end() ; bf_it++, knn_it++) {
 			// hold the results of the knn here
-			auto knn_tuple = it;
+			auto knn_tuple = knn_it;
+			auto bf_tuple = bf_it;
 			// output the findings of kNN
 			output << "Nearest neighbor-" << k_value << ": " << knn_tuple->first << endl;
 			// by the LSH
 			output << "DistanceLSH:" << knn_tuple->second << endl;
 			// and by brute force
-			output << "DistanceTrue:" << bf_tuple.second << endl;
+			output << "DistanceTrue:" << bf_tuple->second << endl;
 			k_value++;
 		}
 		
 		// Print the time elapsed while computing the neighbors with kNN and BF
-		//TODO: insert time measurements
+		output << "tLSH: " << difftime(knn_finish, knn_start) << endl;
+		output << "tTrue: " << difftime(bf_finish, bf_start) << endl;
 
 		// RUn the Range Search algorithm
 		list<pair<int, double>> range_search = lsh_instant.RangeSearch(query_vectors.at(i), radius, 1); //TODO: Probably change c?
