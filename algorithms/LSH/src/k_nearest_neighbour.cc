@@ -18,9 +18,9 @@ using namespace metrics;
 
 template <typename T>
 // function that implements NearestNeighbour
-list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, int k) {
+list<pair<int,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, int k) {
     
-    list<pair<vector<T>,T>> result;
+    list<pair<int,T>> result;
 
     //the greatest of the k min distances
     T kth_min_distance = (T) INT_MAX;
@@ -28,7 +28,7 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, i
     int i = 0;
     int visited = 0;
 
-    //Traverse the hash tables
+    // Traverse the hash tables
     for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
         it != amplified_hash_fns.end(); it++) {
         // find the bucket that the query hashes into
@@ -38,46 +38,52 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, i
         for (std::list<int>::iterator bucket_it = bucket.begin(); bucket_it != bucket.end(); bucket_it++) {
             // vector<T> curr_vector = feature_vectors.at(*bucket_it);
             visited++;
-            //distance between vectors
+            // distance between vectors
             T distance =  ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
             
-			//insert the pair into the list if it's distance is less than the kth_min
+			// if the element is already in the list, skip the checks
+			pair<int, T> new_pair = make_pair(*bucket_it, distance);
+			
+			if (find(result.begin(), result.end(), new_pair) != result.end()) {
+				continue;
+			}
 
+			// insert the pair into the list if it's distance is less than the kth_min
             if (result.size() > 0 && result.size() < k) {
                 // size < k so we just insert it
 				
 				if (distance >= kth_min_distance) {
-					//insert at back if distance > kth_min_distance
-					//kth_min_distance is the distance of the last element
+					// insert at back if distance > kth_min_distance
+					// kth_min_distance is the distance of the last element
 					kth_min_distance = distance;
-					result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
+					result.push_back(new_pair);
 				} else {
-					//iterate through the list to insert it in the right position
-					typename std::list<std::pair<std::vector<T>,T>>::iterator pair_it;
+					// iterate through the list to insert it in the right position
+					typename std::list<std::pair<int,T>>::iterator pair_it;
 					for ( pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
 						if ( distance < pair_it->second) {
-							result.insert(pair_it, make_pair(feature_vectors.at(*bucket_it),distance));
+							result.insert(pair_it, new_pair);
 							break;
 						}
 					}
 				}
             } else if (result.size() > 0 && (result.size() == k)) {
-                //insert, pop the last, and make the kth_min the new last
+                // insert, pop the last, and make the kth_min the new last
                 if (distance < kth_min_distance) {
-                    //iterate through the list to insert it in the right position
-					for (typename std::list<pair<vector<T>,T>>::iterator pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+                    // iterate through the list to insert it in the right position
+					for (typename std::list<pair<int,T>>::iterator pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
 						if ( distance < pair_it->second) {
-							result.insert(pair_it, make_pair(feature_vectors.at(*bucket_it),distance));
+							result.insert(pair_it, new_pair);
 							break;
 						}
 					}
                     result.pop_back();
-					kth_min_distance = result.end()->second;
+					kth_min_distance = result.back().second;
                 }
             } else if (result.size() == 0) {
                 // size is 0, insert 1st element
                 kth_min_distance = distance;
-                result.push_back(make_pair(feature_vectors.at(*bucket_it), distance));
+                result.push_back(new_pair);
             } else {
 				cout << "size " << result.size() << endl;
 				cout << "knearest problem" << endl;
@@ -92,69 +98,70 @@ list<pair<vector<T>,T>> LSH<T>::kNearestNeighbour(std::vector<T> query_vector, i
     return result;
 }
 
-vector<vector<double>> parse_input(string filename) {
-	// open the dataset
-	ifstream input(filename, ios::binary);
+// vector<vector<double>> parse_input(string filename) {
+// 	// open the dataset
+// 	ifstream input(filename, ios::binary);
 
-	// read the magic number of the image
-	int magic_number = 0;
-	input.read((char*)&magic_number, sizeof(int));
-	magic_number = our_math::big_to_litte_endian(magic_number);
-	// find out how many images we are going to parse
-	int n_of_images;
-	input.read((char*)&n_of_images, sizeof(int));
-	n_of_images = our_math::big_to_litte_endian(n_of_images);
+// 	// read the magic number of the image
+// 	int magic_number = 0;
+// 	input.read((char*)&magic_number, sizeof(int));
+// 	magic_number = our_math::big_to_litte_endian(magic_number);
+// 	// find out how many images we are going to parse
+// 	int n_of_images;
+// 	input.read((char*)&n_of_images, sizeof(int));
+// 	n_of_images = our_math::big_to_litte_endian(n_of_images);
 
-	// create a list of vectors to return
-	vector<vector<double>> list_of_vectors;
-	// read the dimensions
-	int rows = 0;
-	input.read((char*)&rows, sizeof(int));
-	rows = our_math::big_to_litte_endian(rows);
-	int cols;
-	input.read((char*)&cols, sizeof(int));
-	cols = our_math::big_to_litte_endian(cols);
+// 	// create a list of vectors to return
+// 	vector<vector<double>> list_of_vectors;
+// 	// read the dimensions
+// 	int rows = 0;
+// 	input.read((char*)&rows, sizeof(int));
+// 	rows = our_math::big_to_litte_endian(rows);
+// 	int cols;
+// 	input.read((char*)&cols, sizeof(int));
+// 	cols = our_math::big_to_litte_endian(cols);
 
-	double x;
-	// for each image start filling the vectors
-	for (int i = 0; i < n_of_images; i++) {
-		// create a vector to store our image data
-		vector<double> vec;
-		// store each byte of the image in the vector, by parsing boh of the image's dimensions
-		for (int j = 0; j < rows; j++) {
-			for (int k = 0; k < cols; k++) {
-				// the pixels are from 0-255, so an unsinged char type is enough
-				unsigned char pixel = 0;
-				input.read((char*)(&pixel), sizeof(pixel));
-				// change its value to double
-				x = (double)pixel;
-				// push the byte into the vector
-				vec.push_back(x);
-			}
-		}
-		// push the vector in our list
-		list_of_vectors.push_back(vec);
-	}
-	// return the list of vectors that we created
-	return list_of_vectors;
-}
+// 	double x;
+// 	// for each image start filling the vectors
+// 	for (int i = 0; i < n_of_images; i++) {
+// 		// create a vector to store our image data
+// 		vector<double> vec;
+// 		// store each byte of the image in the vector, by parsing boh of the image's dimensions
+// 		for (int j = 0; j < rows; j++) {
+// 			for (int k = 0; k < cols; k++) {
+// 				// the pixels are from 0-255, so an unsinged char type is enough
+// 				unsigned char pixel = 0;
+// 				input.read((char*)(&pixel), sizeof(pixel));
+// 				// change its value to double
+// 				x = (double)pixel;
+// 				// push the byte into the vector
+// 				vec.push_back(x);
+// 			}
+// 		}
+// 		// push the vector in our list
+// 		list_of_vectors.push_back(vec);
+// 	}
+// 	// return the list of vectors that we created
+// 	return list_of_vectors;
+// }
 
-int main(int argc, char* argv[]) {
-	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images-idx3-ubyte");
-	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images-idx3-ubyte");
+// int main(int argc, char* argv[]) {
+// 	vector<vector<double>> items = parse_input("../../../misc/datasets/train-images-idx3-ubyte");
+// 	vector<vector<double>> queries = parse_input("../../../misc/querysets/t10k-images-idx3-ubyte");
 
-	vector<double> first = queries.at(2);
-	// vector<vector<float>> a;
-	// a.push_back(x); a.push_back(y);
+// 	vector<double> first = queries.at(1);
+// 	// vector<vector<float>> a;
+// 	// a.push_back(x); a.push_back(y);
 
-	LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), 1000, 4, items.at(1).size(), 10, items);
-	list<pair<vector<double>,double>> result = instant.kNearestNeighbour(first, 3);
-	cout << "result size is " << result.size() << endl;
+// 	LSH<double> instant(4, (uint64_t)(pow(2,32) - 5), pow(2,8), 1000, 4, items.at(1).size(), 10, items);
+// 	list<pair<int,double>> result = instant.kNearestNeighbour(first, 10);
+// 	for (list<pair<int,double>>::iterator pair_it = result.begin(); pair_it != result.end(); pair_it++) {
+// 		cout << pair_it->first << "  " << pair_it->second << endl;
+// 	}
+// 	cout << "size is" << result.size() << endl;
+//     //TODO print the vectors and distances to check them
 
+//     //TODO mem check
 
-    //TODO print the vectors and distances to check them
-
-    //TODO mem check
-
-    return 0;
-}
+//     return 0;
+// }

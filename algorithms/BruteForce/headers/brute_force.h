@@ -45,9 +45,11 @@ class BruteForce {
 				}
 			}
 			assert(result_vector_index > 0);
-			std::cout << result_vector_index << std::endl;
 			// return a pair of the vector and its distance from the query
 			return std::make_pair(result_vector_index, min_distance); 
 		}
+		
 		~BruteForce(){};
+
+		std::list<std::pair<int,T>> kNeighboursBF(std::vector<T> query, int k);
 };
