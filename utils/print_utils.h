@@ -16,4 +16,13 @@ namespace print {
         }
         cout << endl;
     }
+
+    //print list of pairs
+    template <typename T>
+    void list_of_pairs_print(list<pair<T,T>> result) {
+        for ( pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+            cout << pair_it->first << ", " << pair_it->second << endl;
+        }
+        cout << endl;
+    }
 };
