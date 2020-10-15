@@ -2,15 +2,20 @@ TARGET_EXEC = lsh
 
 CC = g++
 
+ABS_DIR = $(shell realpath ../../)
 BUILD_DIR = ./build
-SRC_DIRS = ../../algorithms/LSH/src ../common/ ./
-INC_DIRS = ../../algorithms/LSH/headers ../../algorithms/LSH/headers ../../algorithms/common/ ../common/
+ABS_DIRS = $(ABS_DIR)/algorithms/LSH/src $(ABS_DIR)/programs/common .
+SRC_DIRS = ../../algorithms/LSH/src ../common .
+INC_DIRS = ../../algorithms/LSH/headers/ ../../algorithms/BruteForce/headers/ ../../algorithms/common/ ../common/
 
-SRCS := $(shell find $(SRC_DIRS) -name *.cc)
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+
+SRCS := $(shell find $(ABS_DIRS) -name *.cc)
+$(info $$SRCS is [${SRCS}])
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-CC_FLAGS = -Wall -g -I$(INC_DIRS) -std=c++11
+CC_FLAGS = -Wall -g -std=c++11
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CC) $(OBJS) -o $@
