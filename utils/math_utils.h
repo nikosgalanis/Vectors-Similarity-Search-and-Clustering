@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../algorithms/BruteForce/headers/brute_force.h"
+#include "print_utils.h"
 /** 
  Mathematical functions that are usefull for our project
  and C++ does not offer (or offers under a different definition) 
@@ -45,4 +47,18 @@ namespace our_math {
 
 		return (current << shift_amount) | next;
 	};
+	
+	// compute the best w value
+	inline double compute_w_value(std::vector<std::vector<double>>feature_vectors, int n_images) {
+		// Initialize the BF class
+		BruteForce<double> bf_instant(n_images, feature_vectors.at(1).size(), feature_vectors);
+		int sum_result = 0;
+		for (int i = 0; i < n_images; i++) {
+			list<pair<int, double>> kBF = bf_instant.kNeighboursBF(feature_vectors.at(i), 2);
+			// ge the second element of the list, as the first is the vector itself
+			int distance_from_nn = kBF.back().second;
+			sum_result += distance_from_nn;
+		}
+		return sum_result / (n_images * 1.0);
+	}
 }

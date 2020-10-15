@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 	// defalt lsh values, that we've learned for theory
 	uint64_t m = pow(2,32) - 5;
 	uint32_t M = pow(2,8);
-	uint32_t w = 10 * radius;
+	uint32_t w = 10 * our_math::compute_w_value(feature_vectors, 1000);
 
 	// lsh initialization values that we've learned from our dataset
 	int n_points = feature_vectors.size();
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 	BruteForce<double> bf_instant(n_points, space_dimension, feature_vectors);
 
 	// run all the queries with LSH
-	for (uint64_t i = 0; i < query_vectors.size(); i++) {
+	for (uint64_t i = 0; i < 20; i++) {
 		// output the query number in the file
 		output << "Query: " << i << endl;
 
