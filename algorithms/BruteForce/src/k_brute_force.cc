@@ -32,7 +32,7 @@ std::list<std::pair<int,T>> BruteForce<T>::kNeighboursBF(std::vector<T> query_ve
 		pair<int, T> new_pair = make_pair(i, distance);
 
 		// insert the pair into the list if it's distance is less than the kth_min
-		if (result.size() > 0 && result.size() < k) {
+		if (result.size() > 0 && result.size() < (uint64_t)k) {
 			// size < k so we just insert it
 			
 			if (distance >= kth_min_distance) {
@@ -64,7 +64,6 @@ std::list<std::pair<int,T>> BruteForce<T>::kNeighboursBF(std::vector<T> query_ve
 				}
 				result.pop_back();
 				kth_min_distance = result.back().second;
-				cout << "res " << kth_min_distance << endl;
 			}
 		} else if (result.size() == 0) {
 			// size is 0, insert 1st element

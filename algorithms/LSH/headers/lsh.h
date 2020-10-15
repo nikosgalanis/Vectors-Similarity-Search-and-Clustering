@@ -11,6 +11,9 @@
 
 #include "hashing.h"
 
+#include "../../common/metrics.h"
+#include "../../../utils/print_utils.h"
+
 typedef std::vector<std::list<int>> lsh_hash_table; 
 
 template <typename T>
@@ -97,6 +100,124 @@ class LSH {
 
                 std::pair<int,T> NearestNeighbour(std::vector<T> query_vector);
                 // list<pair<int,T>> kNearestNeighbour(std::vector<T> query_vector, int k);
-                list<pair<int,T>> kNearestNeighbour(std::vector<T> query_vector, int k);
-                list<pair<int,T>> RangeSearch(vector<T> query_vector, double radius, int c);
+                list<pair<int,T>> kNearestNeighbour(std::vector<T> query_vector, int k) {
+                        
+                    list<pair<int,T>> result;
+
+                    //the greatest of the k min distances
+                    T kth_min_distance = (T) INT_MAX;
+
+                    int i = 0;
+                    int visited = 0;
+
+                    // Traverse the hash tables
+                    for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
+                        it != amplified_hash_fns.end(); it++) {
+                        // find the bucket that the query hashes into
+                        int index = it->assign_to_bucket(query_vector);
+                        list<int> bucket = lsh_tables.at(i)[index];
+                        // get all the indexes of the vectors in the bucket
+                        for (std::list<int>::iterator bucket_it = bucket.begin(); bucket_it != bucket.end(); bucket_it++) {
+                            // vector<T> curr_vector = feature_vectors.at(*bucket_it);
+                            visited++;
+                            // distance between vectors
+                            T distance =  metrics::ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
+                            
+                            // if the element is already in the list, skip the checks
+                            pair<int, T> new_pair = make_pair(*bucket_it, distance);
+                            
+                            if (find(result.begin(), result.end(), new_pair) != result.end()) {
+                                continue;
+                            }
+
+                            // insert the pair into the list if it's distance is less than the kth_min
+                            if (result.size() > 0 && result.size() < (uint64_t) k) {
+                                // size < k so we just insert it
+                                
+                                if (distance >= kth_min_distance) {
+                                    // insert at back if distance > kth_min_distance
+                                    // kth_min_distance is the distance of the last element
+                                    kth_min_distance = distance;
+                                    result.push_back(new_pair);
+                                } else {
+                                    // iterate through the list to insert it in the right position
+                                    typename std::list<std::pair<int,T>>::iterator pair_it;
+                                    for ( pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+                                        if ( distance < pair_it->second) {
+                                            result.insert(pair_it, new_pair);
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else if (result.size() > 0 && (result.size() == (uint64_t)k)) {
+                                // insert, pop the last, and make the kth_min the new last
+                                if (distance < kth_min_distance) {
+                                    // iterate through the list to insert it in the right position
+                                    for (typename std::list<pair<int,T>>::iterator pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+                                        if ( distance < pair_it->second) {
+                                            result.insert(pair_it, new_pair);
+                                            break;
+                                        }
+                                    }
+                                    result.pop_back();
+                                    kth_min_distance = result.back().second;
+                                }
+                            } else if (result.size() == 0) {
+                                // size is 0, insert 1st element
+                                kth_min_distance = distance;
+                                result.push_back(new_pair);
+                            } else {
+                                cout << "size " << result.size() << endl;
+                                cout << "knearest problem" << endl;
+                                exit(EXIT_FAILURE);
+                            }
+                            // if (visited > 10 * L) {
+                            //     return b;
+                            // }
+                        }
+                        i++;
+                    }
+                    return result;
+                };
+                list<pair<int,T>> RangeSearch(vector<T> query_vector, double radius, int c) {
+                    list<pair<int,T>> result;
+
+                    int i = 0;
+                    int visited = 0;
+                    // Traverse all the hash tables. aka 1 ... L
+                    for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
+                        it != amplified_hash_fns.end(); it++) {
+                        // refer to the correct hash table in the vetor of hashes
+                        // find the bucket that the query hashes into
+                        int index = it->assign_to_bucket(query_vector);
+                        // access that specific bucket
+                        list<int> bucket = lsh_tables.at(i)[index];
+                        // get all the indexes of the vectors in the bucket
+                        for (std::list<int>::iterator bucket_it = bucket.begin(); bucket_it != bucket.end(); bucket_it++) {
+                            // increase the visited items
+                            visited++;
+                            
+                            // calculate the distance between the selected vector and our query vector
+                            T distance = metrics::ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
+                            
+                            // create the new pair
+                            pair<int, T> new_pair = make_pair(*bucket_it, distance);
+
+                            // check if the pair is already on a list
+                            if (find(result.begin(), result.end(), new_pair) != result.end()) {
+                                continue;
+                            }
+
+                            // if the distance is smaller than the radius, push it in our result list
+                            if (distance < (T)(radius * c)) {
+                                result.push_back(new_pair);
+                            }
+                            // if (visited > 20 * L) {
+                            //     return result;
+                            // }
+                        }
+                        i++;
+                    }
+                    return result;
+                };
 };
