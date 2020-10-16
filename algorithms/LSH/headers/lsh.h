@@ -18,7 +18,6 @@ typedef std::vector<std::list<int>> lsh_hash_table;
 
 template <typename T>
 class LSH {
-    //TODO: W initialization??
     private:
         uint32_t L; // number of hash tables used in LSH
         uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5

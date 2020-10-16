@@ -32,7 +32,7 @@ class BruteForce {
 		space_dim(space_dim), feature_vectors(init_vectors){};
 
 		// run the brute force algorithm to find the nearest neighbor
-		std::pair<int,T> RunBruteForce(std::vector<T> query) { //TODO: Add k
+		std::pair<int,T> RunBruteForce(std::vector<T> query) {
 			// initialize the minimum distance and the result vector index
 			T min_distance = (T)INT_MAX;
 			int result_vector_index = -1;

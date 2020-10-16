@@ -38,7 +38,7 @@ pair<int,T> LSH<T>::NearestNeighbour(vector<T> query_vector) {
             visited++;
             T distance =  ManhatanDistance(feature_vectors.at(*bucket_it), query_vector, space_dim);
             if (distance < distance_b) {
-                vector_index = *bucket_it; //TODO: Almost certainly wrong
+                vector_index = *bucket_it;
                 distance_b = distance;
             }
             // if (visited > 10 * L) {
@@ -116,7 +116,6 @@ pair<int,T> LSH<T>::NearestNeighbour(vector<T> query_vector) {
 // 	// print::vector_print(result.first);
 // 	cout << "Distance" << ' ' << result.second << endl;
 
-// 	//TODO memory check
 
 // 	return 0;
 // }

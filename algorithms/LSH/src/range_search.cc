@@ -119,9 +119,6 @@ list<pair<int,T>> LSH<T>::RangeSearch(vector<T> query_vector, double radius, int
 // 		cout << pair_it->first << "  " << pair_it->second << endl;
 // 	}
 // 	cout << "size is" << result.size() << endl;
-//     //TODO print the vectors and distances to check them
-
-//     //TODO mem check
 
 //     return 0;
 // }

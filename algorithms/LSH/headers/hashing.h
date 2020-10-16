@@ -10,8 +10,6 @@
 #include <bits/stdc++.h> 
 
 
-// TODO: Change when makefile
-// #include "../../metrics.h"
 using namespace std;
 
 namespace lsh {
@@ -22,9 +20,11 @@ namespace lsh {
 			std::vector<double> s; // real random vector, for hash comparison
 			uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
 			uint32_t M; // size of the hash table
+			std::vector<int> const_m_values; // vector that will store (m ^ i) % M, which is needed in every hashing
+
 		public:
 			// class constructor
-			HashFunction(int dim, double w, uint32_t m, uint32_t M) : dim(dim), w(w), s(dim, 0), m(m), M(M) {
+			HashFunction(int dim, double w, uint32_t m, uint32_t M) : dim(dim), w(w), s(dim, 0), m(m), M(M), const_m_values(dim) {
 				// we want to use a uniform real distributor, thus we must initialize it
 				// we want to randomize the input each time
 				std::random_device mch;
@@ -33,6 +33,11 @@ namespace lsh {
 				// initialize the random vector in the space `dim` using the uniform distribution
 				for (int i = 0; i < this->dim; i++) {
 					s.at(i) = distribution(generator);
+				}
+
+				// initialize the const m vector
+				for (int i = 0; i < this->dim; i++) {
+					const_m_values[i] = our_math::modular_power(m, i, M);
 				}
 			};
 			// class destructor
@@ -51,7 +56,7 @@ namespace lsh {
 				// compute the hash result of the vector x
 				for (int i = 0; i < dim; i++) {
 					// each time apply a modulo operation
-					h += our_math::modulo(our_math::modulo(a.at(dim - i - 1), M) * our_math::modular_power(m, i, M), M);
+					h += our_math::modulo(our_math::modulo(a.at(dim - i - 1), M) * const_m_values.at(i), M);
 				}
 				// return the position in the hash
 				return h % M;
