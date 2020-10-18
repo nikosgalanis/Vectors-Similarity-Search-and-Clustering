@@ -6,6 +6,8 @@
 #include <cstring>
 #include <assert.h>
 #include <ctime>
+#include <ratio>
+#include <chrono>
 
 #include "../../utils/math_utils.h"
 #include "../../utils/print_utils.h"
@@ -13,7 +15,7 @@
 #include "../../algorithms/Hypercube/headers/hypercube.h"
 #include "../../algorithms/BruteForce/headers/brute_force.h"
 
-using namespace std;
+using namespace std::chrono;
 
 int main(int argc, char* argv[]) {
     // parsing the arguments
@@ -81,17 +83,19 @@ int main(int argc, char* argv[]) {
 		// output the query number in the file
 		output << "Query: " << i << endl;
 
-		time_t knn_start, knn_finish, bf_start, bf_finish;
-
-		time(&knn_start);
+		auto k_start = std::chrono::high_resolution_clock::now();
 		// run the k-nearest neighbor algorithm, in order to obtain n neighbors
 		list<pair<int,double>> kNNs = hypercube_instant.kNearestNeighbour(query_vectors.at(i), n_neighbors);
-		time(&knn_finish);
+		auto k_end = std::chrono::high_resolution_clock::now();
+
+		duration<double> hc_time_span = duration_cast<duration<double>>(k_end - k_start);  
 		
-		time(&bf_start);
+		auto b_start = std::chrono::high_resolution_clock::now();
 		// run the brute force algorithm, in order to obtain the true nearest neighbors
 		list<pair<int, double>> kBF = bf_instant.kNeighboursBF(query_vectors.at(i), n_neighbors);
-		time(&bf_finish);
+		auto b_end = std::chrono::high_resolution_clock::now();
+
+		duration<double> bf_time_span = duration_cast<duration<double>>(b_end - b_start);  
 
 		// denote the number of neighbor we are dealing with
 		int k_value = 0;
@@ -118,8 +122,8 @@ int main(int argc, char* argv[]) {
 		}
 		
 		// Print the time elapsed while computing the neighbors with kNN and BF
-		output << "tHypercube: " << difftime(knn_finish, knn_start) << endl;
-		output << "tTrue: " << difftime(bf_finish, bf_start) << endl;
+		output << "tLSH: " << hc_time_span.count() << endl;
+		output << "tTrue: " << bf_time_span.count() << endl;
 
 		// RUn the Range Search algorithm
 		list<pair<int, double>> range_search = hypercube_instant.RangeSearch(query_vectors.at(i), radius, c);
