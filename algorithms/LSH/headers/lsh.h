@@ -56,9 +56,7 @@ class LSH {
                         // Insert each amplified hash fn into the apropriate list
                         amplified_hash_fns.push_back(ampl);
                     }
-                    // // initialize our local copy of all the vectors given to hash
-                    // feature_vectors(init_vectors.begin(), init_vectors.end());
-
+                    
                     // initialize all of our hash tables
                     for (uint32_t i = 0; i < L; i++) {
                         // for each hash table

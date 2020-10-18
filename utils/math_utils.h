@@ -2,6 +2,7 @@
 
 #include "../algorithms/BruteForce/headers/brute_force.h"
 #include "print_utils.h"
+#include <bitset>
 /** 
  Mathematical functions that are usefull for our project
  and C++ does not offer (or offers under a different definition) 
@@ -60,5 +61,19 @@ namespace our_math {
 			sum_result += distance_from_nn;
 		}
 		return sum_result / (n_images * 1.0);
+	}
+
+	// find all of the numbers that have hamming distance = 1 with a given number
+	inline std::list<int> hamming_distance_1(int number) {
+		list<int> result;
+		std::string str = std::bitset<32>(number).to_string();
+		for (int i = 0; i < (int)str.size(); i++) {
+			str[i] = abs(str[i] - 1);
+			cout << str << endl;
+			int res_number = (int)std::bitset<32>(str).to_ulong();
+			result.push_back(res_number);
+			str[i] = abs(str[i] - 1);
+		}
+		return result;
 	}
 }
