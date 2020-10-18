@@ -25,23 +25,9 @@ pair<int,T> Hypercube<T>::NearestNeighbour(vector<T> query_vector) {
 
 	/**
 	 Step 1: Hash the given vector with the random projection technique
-	**/
-	std::string bucket_str;
-	// hash k times
-	int k = 0;
-	for (std::list<lsh::HashFunction>::iterator it = hash_fns.begin(); 
-		it != hash_fns.end(); it++) {
-			// hash with the i-th hash fn
-			int res = it->hash(query_vector);
-			// find its pre-maped result of a coin flip
-			bool bit = flipped_coins.at(k)[res];
-			// append the 0/1 value to the string
-			bucket_str += to_string(bit);
-	}
-	
-	// convert the string into an integer
-	int bucket_int = (int)std::bitset<32>(bucket_str).to_ulong();
-	
+	 **/
+	int bucket_int = hash_to_hypercube(query_vector);
+
 	/**
 	 Step 2: Search in the bucket that the query hashes for neighbors
 	**/

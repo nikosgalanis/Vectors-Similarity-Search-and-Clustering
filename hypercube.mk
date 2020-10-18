@@ -1,11 +1,11 @@
-TARGET_EXEC = lsh
+TARGET_EXEC = cube
 
 CC = g++
 
-BUILD_DIR = ./build/lsh
-SRC_DIRS = programs/common programs/LSH 
+BUILD_DIR = ./build/hypercube
+SRC_DIRS = programs/common programs/Hypercube 
 
-INC_DIRS = algorithms/LSH/headers/ algorithms/BruteForce/headers/ algorithms/common/ programs/common/ utils/
+INC_DIRS = algorithms/Hypercube/headers/ algorithms/BruteForce/headers/ algorithms/common/ programs/common/ utils/
 
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 

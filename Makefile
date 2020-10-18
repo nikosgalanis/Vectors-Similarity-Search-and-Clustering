@@ -1,8 +1,8 @@
 .PHONY: clean
 
-include lsh.mk
+# include lsh.mk
 
-# include hypercube.mk
+include hypercube.mk
 
 # include clustering.mk
 
