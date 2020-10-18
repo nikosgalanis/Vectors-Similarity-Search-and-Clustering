@@ -105,4 +105,9 @@ class Hypercube {
 
 		~Hypercube(){};
 
+		//TODO alogrithms
+		std::pair<int,T> NearestNeighbour(std::vector<T> query_vector);
+		list<pair<int,T>> kNearestNeighbour(std::vector<T> query_vector, int k);
+		list<pair<int,T>> RangeSearch(vector<T> query_vector, double radius, int c);
+
 };       
