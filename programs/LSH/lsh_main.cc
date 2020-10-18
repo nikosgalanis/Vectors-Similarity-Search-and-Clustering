@@ -51,6 +51,8 @@ int main(int argc, char* argv[]) {
 	// parse the query set in order to find all of the queries that the user wants to ask
 	vector<vector<double>> query_vectors = parse_input(query_file);
 
+	print::vector_print(query_vectors.at(1));
+
 	// create the output file that we are going to use to print the LSH results
 	ofstream output;
 	output.open(output_file);
@@ -62,8 +64,8 @@ int main(int argc, char* argv[]) {
 	uint32_t c = 1; 
 	int correct_computed = 0;
 	// lsh initialization values that we've learned from our dataset
-	int n_points = feature_vectors.size();
-	int space_dimension = feature_vectors.at(0).size();
+	int n_points = 1000; //feature_vectors.size();
+	int space_dimension = feature_vectors.at(1).size();
 	// initialize our LSH class with the deature vectors and the aprropriate given values
 	LSH<double> lsh_instant(L, m, M, n_points, k, space_dimension, w, feature_vectors);
 
@@ -79,7 +81,7 @@ int main(int argc, char* argv[]) {
 
 		time(&knn_start);
 		// run the k-nearest neighbor algorithm, in order to obtain n neighbors
-		list<pair<int,double>> kNNs = lsh_instant.LSH::kNearestNeighbour(query_vectors.at(i), n_neighbors);
+		list<pair<int,double>> kNNs = lsh_instant.kNearestNeighbour(query_vectors.at(i), n_neighbors);
 		time(&knn_finish);
 		
 		time(&bf_start);
@@ -94,15 +96,20 @@ int main(int argc, char* argv[]) {
 		list<pair<int,double>>::iterator knn_it = kNNs.begin();
 		list<pair<int,double>>::iterator bf_it = kBF.begin();
 
-		for (; knn_it != kNNs.end() && bf_it != kBF.end() ; bf_it++, knn_it++) {
+		// print::list_of_pairs_print(kBF);
+
+		for (; knn_it != kNNs.end() && bf_it != kBF.end() ; knn_it++, bf_it++) {
 			// hold the results of the knn here
 			auto knn_tuple = knn_it;
 			auto bf_tuple = bf_it;
 			// output the findings of kNN
-			output << "Nearest neighbor-" << k_value << ": " << knn_tuple->first << endl;
+			output << "Nearest neighbor-" << k_value + 1 << ": " << knn_tuple->first << endl;
 			// by the LSH
 			output << "DistanceLSH:" << knn_tuple->second << endl;
 			// and by brute force
+			//TODO: delete when done
+			output << "True Neighbor:" << bf_tuple->first << endl;
+
 			output << "DistanceTrue:" << bf_tuple->second << endl;
 			if (knn_tuple->second == bf_tuple->second) {
 				correct_computed++;

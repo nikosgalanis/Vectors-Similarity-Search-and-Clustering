@@ -20,7 +20,7 @@ class Hypercube {
 	private:
 		const uint32_t k; // number of hash functions that we are going to use -> size of hypercube
 		uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
-		uint32_t max; // max elements to be checked during the algorithm
+		uint32_t threshold; // max elements to be checked during the algorithm
 		uint32_t n_points; // number of points to be hashed initially
 		uint32_t w; // a number signifficantly larger thar the radius, affects range search
 		uint32_t space_dim; // the dimension of the space we are going to work with
@@ -36,14 +36,14 @@ class Hypercube {
 		std::list<lsh::HashFunction> hash_fns;
 	
 		// mapping the fliped-coins decision for every possible outcoume of the hash function
-		std::unordered_map<int, bool> flipped_coins;
+		std::vector<std::unordered_map<int, bool>> flipped_coins;
 
 	public:
 
 		// Class constructor
-		Hypercube(const uint32_t k, uint32_t m, uint32_t max, uint32_t n_points, uint32_t w, 
+		Hypercube(const uint32_t k, uint32_t m, uint32_t threshold, uint32_t n_points, uint32_t w, 
 		uint32_t space_dim, std::vector<std::vector<T>> init_vectors) : 
-		k(k), m(m), max(max), n_points(n_points), w(w), space_dim(space_dim),
+		k(k), m(m), threshold(threshold), n_points(n_points), w(w), space_dim(space_dim),
 		feature_vectors(init_vectors) {
 			//measure the time that it takes to initialize the hypercube
 			time_t start, finish;
@@ -70,31 +70,35 @@ class Hypercube {
 			std::random_device mch;
 			std::default_random_engine generator(mch());
 			std::uniform_int_distribution<int> distribution(0,1);
-
-			// pre-map all the possible hash function outcomes to 0-1, so we buy time during initialization
-			for (uint32_t i = 0; i < n_buckets; i++) {
-				bool result = distribution(generator);
-				flipped_coins.insert({i, result});
+			
+			// create the list of the f functions
+			for (uint32_t i = 0; i < k; i++) {
+				std::unordered_map<int,bool> current_map;
+				// pre-map all the possible hash function outcomes to 0-1, so we buy time during initialization
+				for (uint32_t i = 0; i < n_buckets; i++) {
+					bool result = distribution(generator);
+					current_map.insert({i, result});
+				}
+				flipped_coins.push_back(current_map);
 			}
 
 			// insert all of the points into the hypercube
-			for (uint32_t i = 0; i < 30; i++) {
+			for (uint32_t i = 0; i < n_points; i++) {
 				// store the string produced
 				std::string bucket_str;
 				// hash k times
+				int k = 0;
 				for (std::list<lsh::HashFunction>::iterator it = hash_fns.begin(); 
 					it != hash_fns.end(); it++) {
 						// hash with the i-th hash fn
 						int res = it->hash(feature_vectors.at(i));
 						// find its pre-maped result of a coin flip
-						bool bit = flipped_coins[res];
+						bool bit = flipped_coins.at(k)[res];
 						// append the 0/1 value to the string
 						bucket_str += to_string(bit);
 				}
-				cout << "string " << bucket_str;
 				// convert the string into an integer
 				int bucket_int = (int)std::bitset<32>(bucket_str).to_ulong();
-				cout << "    bucket " << bucket_int << endl;
 				hypercube[bucket_int].push_back(i);
 			}
 

@@ -68,12 +68,14 @@ int main(int argc, char* argv[]) {
 	// vector<vector<float>> a;
 	// a.push_back(x); a.push_back(y);
 
-	// Hypercube<double> instant(14, (pow(2,32)-5), 19, items.size(), 20000, items.at(1).size(), items);
+	Hypercube<double> instant(14, (pow(2,32)-5), 19, items.size(), 20000, items.at(1).size(), items);
 	// for (list<pair<int,double>>::iterator pair_it = result.begin(); pair_it != result.end(); pair_it++) {
 	// 	cout << pair_it->first << "  " << pair_it->second << endl;
 	// }
 	// cout << "size is" << result.size() << endl;
-    our_math::hamming_distance_1(14);
+
+
+    // our_math::hamming_distance_1(14,4);
 
     return 0;
 }

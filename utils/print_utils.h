@@ -11,7 +11,7 @@ namespace print {
     template <typename T> 
     // print vector
     inline void vector_print(std::vector<T> vec) {
-        for (int i = 0; i < vec.size(); i++) {
+        for (int i = 0; i < (uint64_t)vec.size(); i++) {
             cout << vec.at(i) << ' ';
         }
         cout << endl;

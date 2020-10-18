@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
 		time(&knn_start);
 		// run the k-nearest neighbor algorithm, in order to obtain n neighbors
-		list<pair<int,double>> kNNs = hypercube_instant.Hypercube::kNearestNeighbour(query_vectors.at(i), n_neighbors);
+		list<pair<int,double>> kNNs = hypercube_instant.kNearestNeighbour(query_vectors.at(i), n_neighbors);
 		time(&knn_finish);
 		
 		time(&bf_start);
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 			auto knn_tuple = knn_it;
 			auto bf_tuple = bf_it;
 			// output the findings of kNN
-			output << "Nearest neighbor-" << k_value << ": " << knn_tuple->first << endl;
+			output << "Nearest neighbor-" << k_value + 1 << ": " << knn_tuple->first << endl;
 			// by the Hypercube
 			output << "DistanceHypercube:" << knn_tuple->second << endl;
 			// and by brute force

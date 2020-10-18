@@ -86,4 +86,17 @@ namespace our_math {
 		
 		return result;
 	}
+
+	// find the hamming distance between 2 integers
+	inline int hamming_distance(int a, int b) {
+		int x = a ^ b;
+		int bits = 0;
+
+		while (x > 0) {
+			bits += x & 1;
+			x >>= 1;
+		}
+
+		return bits;
+	}
 }

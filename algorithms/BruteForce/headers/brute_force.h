@@ -62,8 +62,6 @@ class BruteForce {
 			T kth_min_distance = (T) INT_MAX;
 
 			// Traverse the hash tables
-			// for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
-			//     it != amplified_hash_fns.end(); it++) {
 			for (uint32_t i = 0; i < n_points; i++) {
 				// distance between vectors
 				T distance =  metrics::ManhatanDistance(feature_vectors.at(i), query_vector, space_dim);
@@ -89,7 +87,6 @@ class BruteForce {
 								break;
 							}
 						}
-						kth_min_distance = result.end()->second;
 
 					}
 				} else if (result.size() > 0 && (result.size() == (uint64_t)k)) {
@@ -114,9 +111,6 @@ class BruteForce {
 					cout << "knearest problem" << endl;
 					exit(EXIT_FAILURE);
 				}
-				// if (visited > 10 * L) {
-				//     return b;
-				// }
 			}
 			return result;
 		};
