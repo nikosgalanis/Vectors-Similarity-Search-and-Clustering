@@ -63,17 +63,27 @@ namespace our_math {
 		return sum_result / (n_images * 1.0);
 	}
 
-	// find all of the numbers that have hamming distance = 1 with a given number
-	inline std::list<int> hamming_distance_1(int number) {
+	// find all of the numbers that have hamming distance = 1 with a given number of bitwise size k
+	inline std::list<int> hamming_distance_1(int number, int k) {
 		list<int> result;
 		std::string str = std::bitset<32>(number).to_string();
-		for (int i = 0; i < (int)str.size(); i++) {
-			str[i] = abs(str[i] - 1);
-			cout << str << endl;
-			int res_number = (int)std::bitset<32>(str).to_ulong();
+		std::string new_str = str.substr(str.size() - k);
+		for (int i = 0; i < (int)new_str.size(); i++) {
+			int value = (new_str[i] - '0');
+			if (value == 0)
+				new_str.at(i) = '1';
+			else 
+				new_str.at(i) = '0';
+
+			int res_number = (int)std::bitset<32>(new_str).to_ulong();
 			result.push_back(res_number);
-			str[i] = abs(str[i] - 1);
+
+			if (value == 0)
+				new_str.at(i) = '0';
+			else 
+				new_str.at(i) = '1';
 		}
+		
 		return result;
 	}
 }
