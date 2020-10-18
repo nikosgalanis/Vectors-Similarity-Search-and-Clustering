@@ -51,8 +51,6 @@ int main(int argc, char* argv[]) {
 	// parse the query set in order to find all of the queries that the user wants to ask
 	vector<vector<double>> query_vectors = parse_input(query_file);
 
-	print::vector_print(query_vectors.at(1));
-
 	// create the output file that we are going to use to print the LSH results
 	ofstream output;
 	output.open(output_file);
@@ -96,8 +94,6 @@ int main(int argc, char* argv[]) {
 		list<pair<int,double>>::iterator knn_it = kNNs.begin();
 		list<pair<int,double>>::iterator bf_it = kBF.begin();
 
-		// print::list_of_pairs_print(kBF);
-
 		for (; knn_it != kNNs.end() && bf_it != kBF.end() ; knn_it++, bf_it++) {
 			// hold the results of the knn here
 			auto knn_tuple = knn_it;
@@ -107,9 +103,6 @@ int main(int argc, char* argv[]) {
 			// by the LSH
 			output << "DistanceLSH:" << knn_tuple->second << endl;
 			// and by brute force
-			//TODO: delete when done
-			output << "True Neighbor:" << bf_tuple->first << endl;
-
 			output << "DistanceTrue:" << bf_tuple->second << endl;
 			if (knn_tuple->second == bf_tuple->second) {
 				correct_computed++;
