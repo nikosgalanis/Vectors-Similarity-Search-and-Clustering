@@ -40,8 +40,11 @@ namespace lsh {
 					const_m_values[i] = our_math::modular_power(m, i, M);
 				}
 			};
+
 			// class destructor
 			~HashFunction(){};
+
+			// hash a vector with the 
 			template <typename T>
 			uint32_t hash(std::vector<T> x) {
 				uint32_t h = 0;
@@ -70,6 +73,7 @@ namespace lsh {
 			uint32_t M; // size of the hash table
 			int k; // number of HashFunctions used
 		public:
+
 			//class constructor
 			AmplifiedHashFunction(int dim, double w, uint32_t m, uint32_t M, int k) : dim(dim), w(w), m(m), M(M), k(k) {
 					// initialize the Hash Functions
@@ -77,8 +81,10 @@ namespace lsh {
 						hlist.push_front(HashFunction(dim, w, m, M));
 					}
 			};
+
 			//class destructor
 			~AmplifiedHashFunction(){};
+			
 			template <typename T>
 			// Amplified function by concatenation of the result as strings
 			uint32_t hash(std::vector<T> x) {

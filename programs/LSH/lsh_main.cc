@@ -8,6 +8,7 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
+#include <assert.h>
 
 #include "../../utils/math_utils.h"
 #include "../../utils/print_utils.h"
@@ -20,7 +21,7 @@ using namespace std::chrono;
 int main(int argc, char* argv[]) {
 	// first step: parse the arguments
 	char* input_file, *query_file, *output_file;
-	int k = 0, L = 0, n_neighbors = 0, radius = 0;
+	int k = 4, L = 5, n_neighbors = 1, radius = 10000;
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-d")) {
 			input_file = strdup(argv[++i]);
@@ -53,6 +54,9 @@ int main(int argc, char* argv[]) {
 	// parse the query set in order to find all of the queries that the user wants to ask
 	vector<vector<double>> query_vectors = parse_input(query_file);
 
+	// make sure that there is at least one element in the dataset and the queryset
+	assert(feature_vectors.size() && query_vectors.size());
+	
 	// create the output file that we are going to use to print the LSH results
 	ofstream output;
 	output.open(output_file);
@@ -64,7 +68,7 @@ int main(int argc, char* argv[]) {
 	uint32_t c = 1; 
 	int correct_computed = 0;
 	// lsh initialization values that we've learned from our dataset
-	int n_points = 1000; //feature_vectors.size();
+	int n_points = feature_vectors.size();
 	int space_dimension = feature_vectors.at(1).size();
 	// initialize our LSH class with the deature vectors and the aprropriate given values
 	LSH<double> lsh_instant(L, m, M, n_points, k, space_dimension, w, feature_vectors);
@@ -132,7 +136,6 @@ int main(int argc, char* argv[]) {
 	}
 	cout << "corectly computed neighbours" << correct_computed  << "out of " << n_neighbors * query_vectors.size() << endl;
 
-	//TODO free the strdups
 	free(input_file);
 	free(query_file);
 	free(output_file);

@@ -115,5 +115,3 @@ class BruteForce {
 			return result;
 		};
 };
-
-template class BruteForce <long>;

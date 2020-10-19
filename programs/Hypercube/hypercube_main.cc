@@ -8,6 +8,7 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
+#include <assert.h>
 
 #include "../../utils/math_utils.h"
 #include "../../utils/print_utils.h"
@@ -21,7 +22,7 @@ int main(int argc, char* argv[]) {
     // parsing the arguments
 
     char* input_file, *query_file, *output_file;
-	int k = 0, M = 0, probes = 0, n_neighbors = 0, radius = 0;
+	int k = 14, M = 10, probes = 2, n_neighbors = 1, radius = 10000;
 	for (int i = 1; i < argc; i++) {
 		if (!strcmp(argv[i], "-d")) {
 			input_file = strdup(argv[++i]);
@@ -58,6 +59,9 @@ int main(int argc, char* argv[]) {
 	// parse the query set in order to find all of the queries that the user wants to ask
 	vector<vector<double>> query_vectors = parse_input(query_file);
 
+	// make sure that there is at least one element in the dataset and the queryset
+	assert(feature_vectors.size() && query_vectors.size());
+
 	// create the output file that we are going to use to print the Hypercube results
 	ofstream output;
 	output.open(output_file);
@@ -73,7 +77,7 @@ int main(int argc, char* argv[]) {
 	int space_dimension = feature_vectors.at(0).size();
 
     // Initialize hypercube class
-    Hypercube<double> hypercube_instant(k, m, M, n_points, w, space_dimension, feature_vectors);
+    Hypercube<double> hypercube_instant(k, m, M, probes, n_points, w, space_dimension, feature_vectors);
 
     // initialize our brute force class, in order to find the true distance of the query and its neighbors
 	BruteForce<double> bf_instant(n_points, space_dimension, feature_vectors);
@@ -122,7 +126,7 @@ int main(int argc, char* argv[]) {
 		}
 		
 		// Print the time elapsed while computing the neighbors with kNN and BF
-		output << "tLSH: " << hc_time_span.count() << endl;
+		output << "tHC: " << hc_time_span.count() << endl;
 		output << "tTrue: " << bf_time_span.count() << endl;
 
 		// RUn the Range Search algorithm
@@ -138,7 +142,6 @@ int main(int argc, char* argv[]) {
 	}
     cout << "corectly computed neighbours" << correct_computed  << "out of " << n_neighbors * query_vectors.size() << endl;
 
-	//TODO free the strdups
 	free(input_file);
 	free(query_file);
 	free(output_file);

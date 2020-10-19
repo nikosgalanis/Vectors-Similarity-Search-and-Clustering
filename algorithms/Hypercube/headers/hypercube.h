@@ -21,6 +21,7 @@ class Hypercube {
 		const uint32_t k; // number of hash functions that we are going to use -> size of hypercube
 		uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
 		uint32_t threshold; // max elements to be checked during the algorithm
+		uint32_t max_probes; // max probes of the hypercube to be checked during search
 		uint32_t n_points; // number of points to be hashed initially
 		uint32_t w; // a number signifficantly larger thar the radius, affects range search
 		uint32_t space_dim; // the dimension of the space we are going to work with
@@ -41,10 +42,10 @@ class Hypercube {
 	public:
 
 		// Class constructor
-		Hypercube(const uint32_t k, uint32_t m, uint32_t threshold, uint32_t n_points, uint32_t w, 
-		uint32_t space_dim, std::vector<std::vector<T>> init_vectors) : 
-		k(k), m(m), threshold(threshold), n_points(n_points), w(w), space_dim(space_dim),
-		feature_vectors(init_vectors) {
+		Hypercube(const uint32_t k, uint32_t m, uint32_t threshold, uint32_t max_probes, 
+		uint32_t n_points, uint32_t w, uint32_t space_dim, std::vector<std::vector<T>> init_vectors) : 
+		k(k), m(m), threshold(threshold), max_probes(max_probes), n_points(n_points), 
+		w(w), space_dim(space_dim), feature_vectors(init_vectors) {
 			//measure the time that it takes to initialize the hypercube
 			time_t start, finish;
 			fprintf(stdout, "Hypercube initialization began\n");
@@ -119,6 +120,7 @@ class Hypercube {
 			T distance_b = (T) INT_MAX;
 
 			uint32_t visited = 0;
+			uint32_t probes_checked = 0;
 
 			/**
 			 Step 1: Hash the given vector with the random projection technique
@@ -143,6 +145,10 @@ class Hypercube {
 					return std::make_pair(vector_index, distance_b);
 			}
 
+			// return if max probes were traversed
+			if (++probes_checked >= max_probes)
+				return std::make_pair(vector_index, distance_b);
+			
 			/**
 			 Step 3 .. n: If necessary, check all the buckets with hamming distance 1 .. n
 						until the threshold is reached.
@@ -170,6 +176,9 @@ class Hypercube {
 								return std::make_pair(vector_index, distance_b);
 						}
 					}
+					// return if max probes were traversed
+					if (++probes_checked >= max_probes)
+						return std::make_pair(vector_index, distance_b);
 				}
 				// again, if necessary, increase the hamming distance, so we check further buckets
 				dist_count++;
@@ -185,6 +194,7 @@ class Hypercube {
 			T kth_min_distance = (T) INT_MAX;
 
 			uint32_t visited = 0;
+			uint32_t probes_checked = 0;
 
 			/**
 			 Step 1: Hash the given vector with the random projection technique
@@ -257,6 +267,10 @@ class Hypercube {
 					return result;
 			}
 
+			// return if max probes were traversed
+			if (++probes_checked >= max_probes)
+				return result;
+			
 			/**
 			 Step 3 .. n: If necessary, check all the buckets with hamming distance 1 .. n
 						until the threshold is reached.
@@ -332,6 +346,9 @@ class Hypercube {
 								return result;
 						}
 					}
+					// return if max probes were traversed
+					if (++probes_checked >= max_probes)
+						return result;
 				}
 				// again, if necessary, increase the hamming distance, so we check further buckets
 				dist_count++;
@@ -343,6 +360,7 @@ class Hypercube {
 
 			// store the visited vectors, to find out when we do reach the threshold
 			uint32_t visited = 0;
+			uint32_t probes_checked = 0;
 
 			/**
 			 Step 1: Hash the given vector with the random projection technique
@@ -373,6 +391,10 @@ class Hypercube {
 				if (visited >= threshold)
 					return result;
 			}
+
+			// return if max probes were traversed
+			if (++probes_checked >= max_probes)
+				return result;
 
 			/**
 			 Step 3 .. n: If necessary, check all the buckets with hamming distance 1 .. n
@@ -409,6 +431,9 @@ class Hypercube {
 									return result;
 							}
 					}
+					// return if max probes were traversed
+					if (++probes_checked >= max_probes)
+						return result;
 				}
 				// again, if necessary, increase the hamming distance, so we check further buckets
 				dist_count++;

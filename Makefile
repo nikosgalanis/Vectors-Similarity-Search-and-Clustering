@@ -1,5 +1,12 @@
 .PHONY: clean
 
+
+CC = g++
+
+CC_FLAGS = -Wall -g -std=c++11
+
+BUILD_DIR = ./build
+
 # include lsh.mk
 
 include hypercube.mk

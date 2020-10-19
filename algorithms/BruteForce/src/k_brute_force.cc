@@ -22,8 +22,6 @@ std::list<std::pair<int,T>> BruteForce<T>::kNeighboursBF(std::vector<T> query_ve
     T kth_min_distance = (T) INT_MAX;
 
     // Traverse the hash tables
-    // for (std::list<lsh::AmplifiedHashFunction>::iterator it = amplified_hash_fns.begin(); 
-    //     it != amplified_hash_fns.end(); it++) {
 	for (int i = 0; i < n_points; i++) {
 		// distance between vectors
 		T distance =  metrics::ManhatanDistance(feature_vectors.at(i), query_vector, space_dim);

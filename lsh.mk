@@ -1,25 +1,22 @@
-TARGET_EXEC = lsh
+LSH_TARGET_EXEC = lsh
 
-CC = g++
+LSH_BUILD_DIR = ./build/lsh
+LSH_SRC_DIRS = programs/common programs/LSH 
 
-BUILD_DIR = ./build/lsh
-SRC_DIRS = programs/common programs/LSH 
+LSH_INC_DIRS = algorithms/LSH/headers/ algorithms/BruteForce/headers/ algorithms/common/ programs/common/ utils/
 
-INC_DIRS = algorithms/LSH/headers/ algorithms/BruteForce/headers/ algorithms/common/ programs/common/ utils/
+LSH_INC_FLAGS := $(addprefix -I,$(LSH_INC_DIRS))
 
-INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+LSH_SRCS := $(shell find $(LSH_SRC_DIRS) -name *.cc)
 
-SRCS := $(shell find $(SRC_DIRS) -name *.cc)
+LSH_OBJS := $(LSH_SRCS:%=$(LSH_BUILD_DIR)/%.o)
+LSH_DEPS := $(LSH_OBJS:.o=.d)
 
-OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
-DEPS := $(OBJS:.o=.d)
 
-CC_FLAGS = -Wall -g -std=c++11
-
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@
+$(LSH_BUILD_DIR)/$(LSH_TARGET_EXEC): $(LSH_OBJS)
+	$(CC) $(LSH_OBJS) -o $@
 
 # c source
-$(BUILD_DIR)/%.cc.o: %.cc
+$(LSH_BUILD_DIR)/%.cc.o: %.cc
 	$(MKDIR_P) $(dir $@)
 	$(CC) -c $(CC_FLAGS) $< -o $@ -lm
