@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../algorithms/BruteForce/headers/brute_force.h"
+#include "../algorithms/Search/BruteForce/headers/brute_force.h"
 #include "print_utils.h"
 #include <bitset>
 /** 

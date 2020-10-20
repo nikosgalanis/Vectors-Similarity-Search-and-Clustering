@@ -10,10 +10,10 @@
 #include <utility>
 #include <assert.h>
 
-#include "../../common/metrics.h"
+#include "../../../common/metrics.h"
 
-#include "../../../utils/math_utils.h"
-#include "../../../utils/print_utils.h"
+#include "../../../../utils/math_utils.h"
+#include "../../../../utils/print_utils.h"
 
 template <typename T>
 // class to implement the brute force algorithm

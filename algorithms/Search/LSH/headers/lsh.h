@@ -11,8 +11,8 @@
 
 #include "hashing.h"
 
-#include "../../common/metrics.h"
-#include "../../../utils/print_utils.h"
+#include "../../../common/metrics.h"
+#include "../../../../utils/print_utils.h"
 
 typedef std::vector<std::list<int>> lsh_hash_table; 
 

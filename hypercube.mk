@@ -4,7 +4,7 @@ HC_TARGET_EXEC = cube
 HC_BUILD_DIR = ./build/hypercube
 HC_SRC_DIRS = programs/common programs/Hypercube 
 
-HC_INC_DIRS = algorithms/Hypercube/headers/ algorithms/BruteForce/headers/ algorithms/common/ programs/common/ utils/
+HC_INC_DIRS = algorithms/Search/Hypercube/headers/ algorithms/Search/BruteForce/headers/ algorithms/common/ programs/common/ utils/
 
 HC_INC_FLAGS := $(addprefix -I,$(HC_INC_DIRS))
 

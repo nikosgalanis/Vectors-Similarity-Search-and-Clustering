@@ -10,8 +10,8 @@
 
 
 #include "../../LSH/headers/hashing.h"
-#include "../../common/metrics.h"
-#include "../../../utils/print_utils.h"
+#include "../../../common/metrics.h"
+#include "../../../../utils/print_utils.h"
 
 typedef std::vector<std::list<int>> hypercube_table;
 

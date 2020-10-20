@@ -13,8 +13,8 @@
 #include "../../utils/math_utils.h"
 #include "../../utils/print_utils.h"
 #include "../common/io_utils.h"
-#include "../../algorithms/Hypercube/headers/hypercube.h"
-#include "../../algorithms/BruteForce/headers/brute_force.h"
+#include "../../algorithms/Search/Hypercube/headers/hypercube.h"
+#include "../../algorithms/Search/BruteForce/headers/brute_force.h"
 
 using namespace std::chrono;
 

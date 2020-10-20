@@ -3,7 +3,7 @@ LSH_TARGET_EXEC = lsh
 LSH_BUILD_DIR = ./build/lsh
 LSH_SRC_DIRS = programs/common programs/LSH 
 
-LSH_INC_DIRS = algorithms/LSH/headers/ algorithms/BruteForce/headers/ algorithms/common/ programs/common/ utils/
+LSH_INC_DIRS = algorithms/Search/LSH/headers/ algorithms/Search/BruteForce/headers/ algorithms/common/ programs/common/ utils/
 
 LSH_INC_FLAGS := $(addprefix -I,$(LSH_INC_DIRS))
 
