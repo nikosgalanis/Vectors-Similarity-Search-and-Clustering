@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 		
 		output << "\n\n\n";
 	}
-    cout << "corectly computed neighbours" << correct_computed  << "out of " << n_neighbors * query_vectors.size() << endl;
+    cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
 
 	free(input_file);
 	free(query_file);

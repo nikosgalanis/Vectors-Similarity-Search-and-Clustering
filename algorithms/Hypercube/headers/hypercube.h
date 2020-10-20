@@ -175,10 +175,10 @@ class Hypercube {
 							if (visited >= threshold)
 								return std::make_pair(vector_index, distance_b);
 						}
+						// return if max probes were traversed
+						if (++probes_checked >= max_probes)
+							return std::make_pair(vector_index, distance_b);
 					}
-					// return if max probes were traversed
-					if (++probes_checked >= max_probes)
-						return std::make_pair(vector_index, distance_b);
 				}
 				// again, if necessary, increase the hamming distance, so we check further buckets
 				dist_count++;
@@ -345,10 +345,10 @@ class Hypercube {
 							if (visited >= threshold) 
 								return result;
 						}
+						// return if max probes were traversed
+						if (++probes_checked >= max_probes)
+							return result;
 					}
-					// return if max probes were traversed
-					if (++probes_checked >= max_probes)
-						return result;
 				}
 				// again, if necessary, increase the hamming distance, so we check further buckets
 				dist_count++;

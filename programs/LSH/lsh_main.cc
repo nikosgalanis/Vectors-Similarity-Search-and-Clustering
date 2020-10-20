@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 	BruteForce<double> bf_instant(n_points, space_dimension, feature_vectors);
 
 	// run all the queries with LSH
-	for (uint64_t i = 0; i < query_vectors.size(); i++) {
+	for (uint64_t i = 0; i < 1; i++) {
 		// output the query number in the file
 		output << "Query: " << i << endl;
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
 		
 		output << "\n\n\n";
 	}
-	cout << "corectly computed neighbours" << correct_computed  << "out of " << n_neighbors * query_vectors.size() << endl;
+	cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * 100 << endl;
 
 	free(input_file);
 	free(query_file);

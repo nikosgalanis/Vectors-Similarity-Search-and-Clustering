@@ -94,9 +94,9 @@ class LSH {
 				~LSH() {};
 
 				// Search functions for LSH
-
+				
 				// function that implements NearestNeighbour
-				pair<int,T> LSH<T>::NearestNeighbour(vector<T> query_vector) {	
+				pair<int,T> NearestNeighbour(std::vector<T> query_vector) {	
 					
 					int vector_index;
 					T distance_b = (T) INT_MAX;
@@ -196,10 +196,6 @@ class LSH {
 								// size is 0, insert 1st element
 								kth_min_distance = distance;
 								result.push_back(new_pair);
-							} else {
-								cout << "size " << result.size() << endl;
-								cout << "knearest problem" << endl;
-								exit(EXIT_FAILURE);
 							}
 							// if (visited > 10 * L) {
 							//     return b;

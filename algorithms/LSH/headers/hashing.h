@@ -103,7 +103,7 @@ namespace lsh {
 			uint32_t assign_to_bucket(std::vector<T> x) {
 				// use our own modulo function
 				int result = this->hash(x);
-				return our_math::modulo(result, (M / 8));
+				return our_math::modulo(result, (M));
 			}
 	};
 }
