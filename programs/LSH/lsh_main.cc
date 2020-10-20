@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 	// defalt lsh values, that we've learned for theory
 	uint64_t m = pow(2,32) - 5;
 	uint32_t M = pow(2,8);
-	uint32_t w = 2 * our_math::compute_w_value(feature_vectors, 1000);
+	uint32_t w = our_math::compute_w_value(feature_vectors, 1000);
 	uint32_t c = 1; 
 	int correct_computed = 0;
 	// lsh initialization values that we've learned from our dataset
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 	BruteForce<double> bf_instant(n_points, space_dimension, feature_vectors);
 
 	// run all the queries with LSH
-	for (uint64_t i = 0; i < 1; i++) {
+	for (uint64_t i = 0; i < query_vectors.size(); i++) {
 		// output the query number in the file
 		output << "Query: " << i << endl;
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
 		
 		output << "\n\n\n";
 	}
-	cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * 100 << endl;
+	cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
 
 	free(input_file);
 	free(query_file);
