@@ -17,6 +17,15 @@ namespace print {
         cout << endl;
     }
 
+    // print vector and iterator
+    template <typename T>
+    inline void vector_it_print(std::vector<T> vec) {
+        for (int i = 0; i < (uint64_t)vec.size(); i++) {
+            cout << "index " << i << ", value " << vec.at(i) << endl;
+        }
+        cout << endl;
+    }
+
     //print list of pairs
     template <typename T, typename M>
     inline void list_of_pairs_print(list<pair<T,M>> result) {

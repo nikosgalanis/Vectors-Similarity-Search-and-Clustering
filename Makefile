@@ -7,13 +7,16 @@ CC_FLAGS = -Wall -g -std=c++11
 
 BUILD_DIR = ./build
 
-# include lsh.mk
+include lsh.mk
 
 include hypercube.mk
 
 # include clustering.mk
 
 lsh:
+
+hypercube:
+
 
 clean:
 	$(RM) -r $(BUILD_DIR)
