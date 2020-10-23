@@ -63,8 +63,14 @@ int main(int argc, char* argv[]) {
 	vector<vector<double>> queries = parse_input("../../misc/querysets/t10k-images-idx3-ubyte");
 
 	Clustering<double> instant("lloyds", items, 4);
-    instant.initialization();
+    
+    cout << "clustering algorithm began" << endl;
+    instant.run_clustering();
+    cout << "clustering algorithm ended\n" << endl;
 
+    auto pair = instant.compute_silhouette();
+    print::vector_print(pair.first);
+    cout << "Total silhouette: " << pair.second << endl;
 
 	return 0;
 }

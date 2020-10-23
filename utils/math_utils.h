@@ -3,6 +3,8 @@
 #include "../algorithms/Search/BruteForce/headers/brute_force.h"
 #include "print_utils.h"
 #include <bitset>
+#include <vector>
+
 /** 
  Mathematical functions that are usefull for our project
  and C++ does not offer (or offers under a different definition) 
@@ -98,5 +100,26 @@ namespace our_math {
 		}
 
 		return bits;
+	}
+	
+	template <typename T>
+	// add the vector b to a
+	inline vector<T> add_vectors(std::vector<T> a, std::vector<T>b) {
+		assert(a.size() == b.size());
+		int size = (int)a.size();
+
+		for (int i = 0; i < size; i++)
+			a.at(i) += b.at(i);
+
+		return a;
+	}
+
+	template <typename T>
+	// devide a vector by an integer
+	inline vector<T> divide(vector <T> a, int k) {
+		for (int i = 0; i < (int)a.size(); i++)
+			a.at(i) /= k;
+
+		return a;
 	}
 }
