@@ -92,7 +92,7 @@ class Clustering {
 				exit(EXIT_FAILURE);
 			}
 			this->assignment_method = assignment_method;
-			n_points = feature_vectors.size();
+			n_points = 5000;//feature_vectors.size();
 			cout << n_points << endl;
 			assert(n_points);
 			space_dim = feature_vectors.at(0).size();
@@ -296,13 +296,14 @@ class Clustering {
 				}
 
 				// compute the vecor's silhouette
-				int sil = (b_i - a_i) / std::max(a_i, b_i);
+				double sil = (b_i - a_i) / std::max(a_i, b_i);
 
 				// add it to the cluster's silhouette
 				silhouettes.at(nearest) += sil;
 
 				// add it to the total silhouette
 				total_sil += sil;
+				cout << i << endl;
 			}
 			// compute the final value of the silhouette for each cluster
 			for (int i = 0; i < k; i++)

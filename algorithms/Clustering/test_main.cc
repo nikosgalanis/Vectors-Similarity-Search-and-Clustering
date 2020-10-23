@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 	vector<vector<double>> items = parse_input("../../misc/datasets/train-images-idx3-ubyte");
 	vector<vector<double>> queries = parse_input("../../misc/querysets/t10k-images-idx3-ubyte");
 
-	Clustering<double> instant("lloyds", items, 4);
+	Clustering<double> instant("lloyds", items, 10);
     
     cout << "clustering algorithm began" << endl;
     instant.run_clustering();
