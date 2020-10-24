@@ -11,6 +11,8 @@
 #include "../Search/LSH/headers/lsh.h"
 #include "../Search/Hypercube/headers/hypercube.h"
 
+#define UNASSIGNED -1
+
 template <typename T>
 class Clustering {
 	private:
@@ -38,13 +40,13 @@ class Clustering {
 		// in case of lsh, we need these extra variables
 		uint32_t lsh_l;
 		uint32_t lsh_k;
-		// LSH<T> lsh_instant;
+		LSH<T>* lsh_instant;
 
 		// in case of hypercube, we need these extra variables
 		uint32_t hc_M;
 		uint32_t hc_k;
 		uint32_t hc_probes;
-		// Hypercube<T> hc_instant;
+		Hypercube<T>* hc_instant;
 
 		//compute the nearest center for a given vector
 		int nearest_centroid(vector<T> vec) {
@@ -62,7 +64,7 @@ class Clustering {
 			assert(nearest != -1);
 
 			return nearest;
-		}
+		};
 
 		int second_nearest_centroid(vector <T> vec) {
 			// get the nearest centroid
@@ -81,6 +83,34 @@ class Clustering {
 			assert(second_nearest != -1);
 
 			return second_nearest;
+		};
+		// compute how many unassigned vectors we've got, for the reverse assignement method
+		int count_unassigned(vector<int> assigned) {
+			int res = 0;
+			for (int i = 0; i < n_points; i++) {
+				if (assigned.at(i) == UNASSIGNED) {
+					res++;
+				}
+			}
+			
+			return res;
+		}
+
+
+		T min_dist_between_centroids() {
+			// initialize the min distance
+			T min_dist = (T)INT_MAX;
+
+			for (int i = 0; i < k; i++) {
+				for (int j = 0; j < k; j++) {
+					if (i != j) {
+						T dist = metrics::ManhatanDistance(centroids.at(i), centroids.at(j), space_dim);
+						if (dist < min_dist)
+							min_dist = dist;
+					}
+				}
+			} 
+			return min_dist;
 		}
 
 	public:
@@ -92,7 +122,7 @@ class Clustering {
 				exit(EXIT_FAILURE);
 			}
 			this->assignment_method = assignment_method;
-			n_points = 5000;//feature_vectors.size();
+			n_points = feature_vectors.size();
 			cout << n_points << endl;
 			assert(n_points);
 			space_dim = feature_vectors.at(0).size();
@@ -102,53 +132,64 @@ class Clustering {
 
 		};
 
-		// // constructor when reverse assignment using lsh is requested
-		// Clustering(std::string assignment_method, std::vector<std::vector<T>> feature_vectors,
-		// 	uint32_t lsh_l, uint32_t lsh_k): feature_vectors(feature_vectors), lsh_l(lsh_l), lsh_k(lsh_k) {
-		// 		if (assignment_method != "reverse_LSH") {
-		// 			cout << "Wrong assignment method selected";
-		// 			exit(EXIT_FAILURE);
-		// 		}	
-		// 		this->assignment_method = assignment_method;
+		// constructor when reverse assignment using lsh is requested
+		Clustering(std::string assignment_method, std::vector<std::vector<T>> feature_vectors,
+			uint32_t k, uint32_t lsh_l, uint32_t lsh_k): feature_vectors(feature_vectors), k(k), lsh_l(lsh_l), lsh_k(lsh_k) {
+				if (assignment_method != "reverse_LSH") {
+					cout << "Wrong assignment method selected";
+					exit(EXIT_FAILURE);
+				}	
+				this->assignment_method = assignment_method;
 
-		// 		// default lsh arguments
-		// 		uint32_t m = pow(2,32) - 5;
-		// 		uint32_t M = 256;
-		// 		uint32_t w = 10000;
+				// default lsh arguments
+				uint32_t m = pow(2,32) - 5;
+				uint32_t M = 256;
+				uint32_t w = 10000;
 				
-		// 		n_points = feature_vectors.size();
-		// 		assert(n_points);
-		// 		space_dim = feature_vectors.at(0).size();
+				n_points = feature_vectors.size();
+				assert(n_points);
+				space_dim = feature_vectors.at(0).size();
 
-		// 		// initialize the lsh class
-		// 		lsh_instant(lsh_l, m, M, n_points, lsh_k, space_dim, w, feature_vectors);
+				// initialize the lsh class
+				lsh_instant = new LSH<T>(lsh_l, m, M, n_points, lsh_k, space_dim, w, feature_vectors);
 
-		// };
+				vector<int> assigned(n_points, 0);
+				assigned_centroid = assigned;
+		};
 
-		// // constructor when reverse assignment using hypercube is requested
-		// Clustering(std::string assignment_method, std::vector<std::vector<T>> feature_vectors,
-		// 	uint32_t hc_M, uint32_t hc_k, uint32_t hc_probes): feature_vectors(feature_vectors), 
-		// 	hc_M(hc_M), hc_k(hc_k), hc_probes(hc_probes) {
-		// 		if (assignment_method != "reverse_Hypercube") {
-		// 			cout << "Wrong assignment method selected";
-		// 			exit(EXIT_FAILURE);
-		// 		}	
-		// 		this->assignment_method = assignment_method;
+		// constructor when reverse assignment using hypercube is requested
+		Clustering(std::string assignment_method, std::vector<std::vector<T>> feature_vectors, uint32_t k,
+			uint32_t hc_M, uint32_t hc_k, uint32_t hc_probes): feature_vectors(feature_vectors), k(k),
+			hc_M(hc_M), hc_k(hc_k), hc_probes(hc_probes) {
+				if (assignment_method != "reverse_Hypercube") {
+					cout << "Wrong assignment method selected";
+					exit(EXIT_FAILURE);
+				}	
+				this->assignment_method = assignment_method;
 
-		// 		// default hypercube arguments
-		// 		uint32_t m = pow(2,32) - 5;
-		// 		uint32_t w = 10000;
+				// default hypercube arguments
+				uint32_t m = pow(2,32) - 5;
+				uint32_t w = 10000;
 
 				
-		// 		n_points = feature_vectors.size();
-		// 		assert(n_points);
-		// 		space_dim = feature_vectors.at(0).size();
+				n_points = feature_vectors.size();
+				assert(n_points);
+				space_dim = feature_vectors.at(0).size();
 
-		// 		hc_instant(hc_k, m, hc_M, hc_probes, n_points, w, space_dim, feature_vectors);
-		// };
+				hc_instant = new Hypercube<T>(hc_k, m, hc_M, hc_probes, n_points, w, space_dim, feature_vectors);
 
-		// default destructor for the clustering class
-		~Clustering(){};
+				vector<int> assigned(n_points, 0);
+				assigned_centroid = assigned;
+		};
+
+		// destructor for the clustering class
+		~Clustering(){
+			if (assignment_method == "reverse_LSH") 
+				delete lsh_instant;
+			if (assignment_method == "reverse_Hypercube") 
+				delete hc_instant;
+
+		};
 
 		// get the vector of the centroids
 		std::vector<std::vector<T>> get_centroids() {
@@ -231,7 +272,6 @@ class Clustering {
 			}
 			// keep track of how many vectors are currently assigned to each centroid
 			vector<int> n_assinged(k, 0);
-
 			// compute the sum of each vector assigned in every cluster
 			for (int i = 0; i < n_points; i++) {
 				// find in which centroid the vector is assigned to
@@ -241,7 +281,6 @@ class Clustering {
 				// increase the assgined vectors in the current centroid
 				n_assinged.at(index)++;
 			}
-
 			// deivide each centroid so we can get the mean value
 			for (int i = 0; i < k; i++) {
 				centroids.at(i) = our_math::divide(centroids.at(i), n_assinged.at(i));
@@ -263,15 +302,96 @@ class Clustering {
 
 			return changes;
 		};
-		int assignment_LSH(void) {
-			return 0;
-		};
-		int assignment_hypercube(void) {
-			return 0;
+		int reverse_assignment(void) {
+			// keep a vector of the new assignments
+			vector<int> new_assigned(n_points, -1);
+			// initial radius
+			T radius = min_dist_between_centroids() / 2;
+			// keep track of the changes
+			int changes = 0;
+			// set a threshold in order to break the loop
+			int prev_unassigned = INT_MAX;
+			// keep track of unassinged points
+			int unassinged = INT_MAX - 1;
+
+			while (unassinged != prev_unassigned) {
+				// do a range search query for every centroid
+				for (int i = 0; i < k; i++) {
+					list<pair<int, T>> result;
+					// the type of range search depends on what the user wants
+					if (assignment_method == "reverse_LSH")
+						result = lsh_instant->RangeSearch(centroids.at(i), radius, 1);
+					else if (assignment_method == "reverse_Hypercube")
+						result = hc_instant->RangeSearch(centroids.at(i), radius, 1);
+
+					// iterate all the results
+					typename std::list<std::pair<int,T>>::iterator pair_it;
+					for (pair_it = result.begin(); pair_it !=result.end(); pair_it++) {
+						// get the current vector
+						int curr_vec = pair_it->first;
+
+						// if it is still unassigned
+						if (new_assigned.at(curr_vec) == -1) {
+							// temporarly assign it to this centroid
+							new_assigned.at(curr_vec) = i;
+						}
+						// if it has been already assigned
+						else {
+							// chcek if its distance from the current centroid, is less than the previous' one
+							int prev_assigned = new_assigned.at(curr_vec); 
+							T prev_dist = metrics::ManhatanDistance(feature_vectors.at(curr_vec), centroids.at(prev_assigned), space_dim);
+							T new_dist = pair_it->second;
+							// if it is, it is closest to the current centroid, thus change the asssigned value in the temp vector
+							if (new_dist < prev_dist)
+								new_assigned.at(curr_vec) = i;
+						}
+					}
+				}
+
+				// update the unassigned vectors count
+				prev_unassigned = unassinged;
+				unassinged = count_unassigned(new_assigned);
+				// update the radius
+				radius *= 2;
+			}
+
+			// update the untracked vectors, and check for new changes
+			for (int i = 0; i < n_points; i++) {
+				// for each one not tracked, use direct assignment
+				if (new_assigned.at(i) == UNASSIGNED)
+					new_assigned.at(i) = nearest_centroid(feature_vectors.at(i));
+				// check for changes
+				if (assigned_centroid.at(i) != new_assigned.at(i))
+					changes++;
+
+				// assigned_centroid.at(i) =  new_assigned.at(i);
+			}
+
+			// update the assigned vector
+			assigned_centroid = new_assigned;
+			return changes;
 		};
 
 		// compute the silhouette of each cluster, and the total one
 		std::pair<std::vector<double>, double> compute_silhouette(void) {
+
+			// create a temporary map to store the vectors that belong to each centroid
+			std::vector<std::list<int>> centroids_map(k);
+
+			for (int i = 0; i < n_points; i++) {
+				centroids_map.at(assigned_centroid.at(i)).push_back(i);
+			}
+
+			double** distances = new double*[n_points];
+
+			for(int i = 0; i < n_points; ++i)
+				distances[i] = new double[n_points];
+			
+			for (int i = 0; i < n_points; i++) {
+				for (int j = 0; j < n_points; j++) {
+
+				}
+			}
 			// declare a vector of each cluster's silhouette
 			vector<double> silhouettes(k, 0);
 
@@ -288,12 +408,13 @@ class Clustering {
 				assigned.at(nearest)++;
 				double a_i = 0, b_i = 0;
 				// compute a and b values for this vector
-				for (int j = 0; j < n_points; j++) {
-					if (assigned_centroid.at(j) == nearest)
-						a_i += (double)metrics::ManhatanDistance(feature_vectors.at(i), feature_vectors.at(j), space_dim);
-					else if (assigned_centroid.at(j) == second_nearest)
-						b_i += (double)metrics::ManhatanDistance(feature_vectors.at(i), feature_vectors.at(j), space_dim);
-				}
+				for (std::list<int>::iterator it = centroids_map.at(nearest).begin(); it != centroids_map.at(nearest).end(); it++) {
+					a_i += (double)metrics::ManhatanDistance(feature_vectors.at(i), feature_vectors.at(*it), space_dim);
+				}	
+
+				for (std::list<int>::iterator it = centroids_map.at(second_nearest).begin(); it != centroids_map.at(second_nearest).end(); it++) {
+					b_i += (double)metrics::ManhatanDistance(feature_vectors.at(i), feature_vectors.at(*it), space_dim);
+				}	
 
 				// compute the vecor's silhouette
 				double sil = (b_i - a_i) / std::max(a_i, b_i);
@@ -303,11 +424,13 @@ class Clustering {
 
 				// add it to the total silhouette
 				total_sil += sil;
-				cout << i << endl;
+				if (i % 100 == 0)
+					cout << i << endl;
 			}
 			// compute the final value of the silhouette for each cluster
-			for (int i = 0; i < k; i++)
+			for (int i = 0; i < k; i++) {
 				silhouettes.at(i) /= assigned.at(i);
+			}
 
 			// compute the final value of the total silhouette
 			total_sil /= n_points;
@@ -332,14 +455,12 @@ class Clustering {
 				// Step 2: call the appropriate method of assignment
 				if (assignment_method == "lloyds")
 					changed = assignment_lloyds();
-
-				else if (assignment_method == "LSH")
-					changed = assignment_LSH();
-				else if (assignment_method == "Hypercube")
-					changed = assignment_hypercube();
+				else 
+					changed = reverse_assignment();
 
 				// Step 3: Update the centroids
 				update();
+				cout << "changed " << changed << endl;
 			}
 		}
 };
