@@ -69,9 +69,9 @@ run_cluster_cube_complete: cluster
 	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_CUBE_COMPLETE_ARGS)
 
 # Valgrind
-valgrind_lsh:
+valgrind_lsh: lsh
 	valgrind ./$(EXEC_DIR)/lsh/lsh $(LSH_ARGS)
-valgrind_cube:
+valgrind_cube: cube
 	valgrind ./$(EXEC_DIR)/hypercube/cube $(CUBE_ARGS)
 valgrind_cluster_lloyds: cluster
 	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_ARGS)
