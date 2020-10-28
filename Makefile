@@ -6,9 +6,10 @@ CC = g++
 CC_FLAGS = -Wall -g -std=c++11 -Ofast
 
 BUILD_DIR = ./build
+EXEC_DIR = ./executables
 
-
-all: lsh cube 
+# Compile all
+all: lsh cube clustering
 	@echo all ready
 
 
@@ -17,35 +18,47 @@ include lsh.mk
 
 include hypercube.mk
 
-# include clustering.mk
+include clustering.mk
 
-
-lsh: $(LSH_BUILD_DIR)/$(LSH_TARGET_EXEC)
+# Compilation
+lsh: $(LSH_EXEC_DIR)/$(LSH_TARGET_EXEC)
 	@echo lsh ready
 
-cube: $(HC_BUILD_DIR)/$(HC_TARGET_EXEC)
+cube: $(HC_EXEC_DIR)/$(HC_TARGET_EXEC)
 	@echo cube ready
 
+cluster: $(CL_EXEC_DIR)/$(CL_TARGET_EXEC)
+	@echo cluster ready
+
+# Cleaning
 clean:
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR) $(EXEC_DIR)
 clean_lsh:
-	$(RM) -r $(BUILD_DIR)/lsh
+	$(RM) -r $(BUILD_DIR)/lsh $(EXEC_DIR)/lsh
 clean_cube:
-	$(RM) -r $(BUILD_DIR)/hypercube
+	$(RM) -r $(BUILD_DIR)/hypercube $(EXEC_DIR)/hypercube
+clean_cluster:
+	$(RM) -r $(BUILD_DIR)/clustering $(EXEC_DIR)/clustering
 
 # Default Arguments for path I am in
-LSH_ARGS  = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 4 -L 4 -o lsh_out -N 1 -R 10000
-CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 14 -M 10 -probes 2 -o out_hyper -N 1 -R 10000
+LSH_ARGS  = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 4 -L 4 -o executables/lsh/lsh_out -N 1 -R 10000
+CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 14 -M 10 -probes 2 -o executables/hypercube/cube_out -N 1 -R 10000
+CLUSTER_LLOYDS_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_out -m Lloyds
+CLUSTER_LLOYDS_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_complete_out -complete -m Lloyds
 
 run_lsh: lsh
-	./$(BUILD_DIR)/lsh/lsh $(LSH_ARGS)
+	./$(EXEC_DIR)/lsh/lsh $(LSH_ARGS)
 run_cube: cube
-	./$(BUILD_DIR)/hypercube/cube $(CUBE_ARGS)
+	./$(EXEC_DIR)/hypercube/cube $(CUBE_ARGS)
+run_cluster_lloyds: cluster
+	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_ARGS)
+run_cluster_lloyds_complete:
+	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_COMPLETE_ARGS)
 
 valgrind_lsh:
-	valgrind ./$(BUILD_DIR)/lsh/lsh $(LSH_ARGS)
+	valgrind ./$(EXEC_DIR)/lsh/lsh $(LSH_ARGS)
 valgrind_cube:
-	valgrind ./$(BUILD_DIR)/hypercube/cube $(CUBE_ARGS)
+	valgrind ./$(EXEC_DIR)/hypercube/cube $(CUBE_ARGS)
 	
 
 -include $(DEPS)
