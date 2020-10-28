@@ -3,7 +3,7 @@
 
 CC = g++
 
-CC_FLAGS = -Wall -g -std=c++11  -Wno-reorder
+CC_FLAGS = -Wall -g -std=c++11  -Wno-reorder -Ofast
 
 BUILD_DIR = ./build
 EXEC_DIR = ./executables
@@ -42,7 +42,7 @@ clean_cluster:
 
 # Default Arguments for path I am in
 LSH_ARGS  = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 4 -L 4 -o executables/lsh/lsh_out -N 1 -R 10000
-CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 14 -M 100 -probes 50 -o executables/hypercube/cube_out -N 1 -R 1
+CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 14 -M 100 -probes 50 -o executables/hypercube/cube_out -N 1 -R 10000
 CLUSTER_LLOYDS_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_out -m Lloyds 
 CLUSTER_LLOYDS_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_complete_out -complete -m Lloyds 
 CLUSTER_LSH_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lsh_out -m Range_Search_LSH
