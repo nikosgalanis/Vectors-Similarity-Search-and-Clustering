@@ -457,6 +457,7 @@ class Clustering {
 			
 				// Step 3: Update the centroids
 				update();
+				cout << "changed " << changed << endl; 
 			}
 		}
 };

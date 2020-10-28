@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
 	// first step: parse the arguments
 	char* input_file = NULL, *query_file = NULL, *output_file = NULL;
 	int k, L, n_neighbors, radius;
+	double sum1 = 0, sum2 = 0;
 	
 	// parse the comand line arguments given
 	parse_lsh_args(argc, argv, &input_file, &output_file, &query_file,
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
 
 	// defalt lsh values, that we've learned for theory
 	uint64_t m = pow(2,32) - 5;
-	uint32_t M = n_points / 16;
+	uint32_t M = 256;
 	uint32_t w = our_math::compute_w_value(feature_vectors, 1000);
 	uint32_t c = 1; 
 	int correct_computed = 0;
@@ -56,7 +57,7 @@ int main(int argc, char* argv[]) {
 	BruteForce<double> bf_instant(n_points, space_dimension, feature_vectors);
 
 	// run all the queries with LSH
-	for (uint64_t i = 0; i < query_vectors.size(); i++) {
+	for (uint64_t i = 0; i < 1000; i++) {
 		// output the query number in the file
 		output << "Query: " << i << endl;
 
@@ -101,6 +102,8 @@ int main(int argc, char* argv[]) {
 		// Print the time elapsed while computing the neighbors with kNN and BF
 		output << "tLSH: " << knn_time_span.count() << endl;
 		output << "tTrue: " << bf_time_span.count() << endl;
+		sum1 += knn_time_span.count();
+		sum2 += bf_time_span.count();
 
 		// RUn the Range Search algorithm
 		list<pair<int, double>> range_search = lsh_instant.RangeSearch(query_vectors.at(i), radius, c);
@@ -113,6 +116,8 @@ int main(int argc, char* argv[]) {
 		
 		output << "\n\n\n";
 	}
+	cout << "mean lsh time " << sum1 / 1000 << endl;
+	cout << "mean bf time " << sum2 / 1000 << endl;
 	cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
 
 	output.close();

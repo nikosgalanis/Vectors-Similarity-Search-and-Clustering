@@ -9,7 +9,7 @@ BUILD_DIR = ./build
 EXEC_DIR = ./executables
 
 # Compile all
-all: lsh cube clustering
+all: lsh cube cluster
 	@echo all ready
 
 
