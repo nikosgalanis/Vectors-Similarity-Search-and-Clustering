@@ -45,20 +45,46 @@ LSH_ARGS  = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-ima
 CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 14 -M 10 -probes 2 -o executables/hypercube/cube_out -N 1 -R 10000
 CLUSTER_LLOYDS_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_out -m Lloyds
 CLUSTER_LLOYDS_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_complete_out -complete -m Lloyds
+CLUSTER_LSH_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lsh_out -m Range_Search_LSH
+CLUSTER_LSH_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lsh_complete_out -complete -m Range_Search_LSH
+CLUSTER_CUBE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_cube_out -m Range_Search_Hypercube
+CLUSTER_CUBE_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_cube_complete_out -complete -m Range_Search_Hypercube
 
+# Running
 run_lsh: lsh
 	./$(EXEC_DIR)/lsh/lsh $(LSH_ARGS)
 run_cube: cube
 	./$(EXEC_DIR)/hypercube/cube $(CUBE_ARGS)
 run_cluster_lloyds: cluster
 	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_ARGS)
-run_cluster_lloyds_complete:
+run_cluster_lloyds_complete: cluster
 	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_COMPLETE_ARGS)
+run_cluster_lsh: cluster
+	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LSH_ARGS)
+run_cluster_lsh_complete: cluster
+	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LSH_COMPLETE_ARGS)
+run_cluster_cube: cluster
+	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_CUBE_ARGS)
+run_cluster_cube_complete: cluster
+	./$(EXEC_DIR)/clustering/cluster $(CLUSTER_CUBE_COMPLETE_ARGS)
 
+# Valgrind
 valgrind_lsh:
 	valgrind ./$(EXEC_DIR)/lsh/lsh $(LSH_ARGS)
 valgrind_cube:
 	valgrind ./$(EXEC_DIR)/hypercube/cube $(CUBE_ARGS)
+valgrind_cluster_lloyds: cluster
+	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_ARGS)
+valgrind_cluster_lloyds_complete: cluster
+	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LLOYDS_COMPLETE_ARGS)
+valgrind_cluster_lsh: cluster
+	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LSH_ARGS)
+valgrind_cluster_lsh_complete: cluster
+	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_LSH_COMPLETE_ARGS)
+valgrind_cluster_cube: cluster
+	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_CUBE_ARGS)
+valgrind_cluster_cube_complete: cluster
+	valgrind ./$(EXEC_DIR)/clustering/cluster $(CLUSTER_CUBE_COMPLETE_ARGS)
 	
 
 -include $(DEPS)
