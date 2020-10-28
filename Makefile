@@ -3,7 +3,7 @@
 
 CC = g++
 
-CC_FLAGS = -Wall -g -std=c++11
+CC_FLAGS = -Wall -g -std=c++11 -Ofast
 
 BUILD_DIR = ./build
 
@@ -40,12 +40,12 @@ CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-ima
 run_lsh: lsh
 	./$(BUILD_DIR)/lsh/lsh $(LSH_ARGS)
 run_cube: cube
-	./$(BUILD_DIR)/hypercube/lsh $(CUBE_ARGS)
+	./$(BUILD_DIR)/hypercube/cube $(CUBE_ARGS)
 
 valgrind_lsh:
 	valgrind ./$(BUILD_DIR)/lsh/lsh $(LSH_ARGS)
 valgrind_cube:
-	valgrind ./$(BUILD_DIR)/hypercube/lsh $(CUBE_ARGS)
+	valgrind ./$(BUILD_DIR)/hypercube/cube $(CUBE_ARGS)
 	
 
 -include $(DEPS)
