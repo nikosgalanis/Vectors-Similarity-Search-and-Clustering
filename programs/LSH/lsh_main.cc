@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 		sum2 += bf_time_span.count();
 
 		// RUn the Range Search algorithm
-		list<pair<int, double>> range_search = lsh_instant.RangeSearch(query_vectors.at(i), radius, c);
+		list<pair<int, double>> range_search = lsh_instant.RangeSearch(query_vectors.at(i), 1, c);
 
 		// print in the output file all of our findings
 		output << "R-near neighbors:" << endl;

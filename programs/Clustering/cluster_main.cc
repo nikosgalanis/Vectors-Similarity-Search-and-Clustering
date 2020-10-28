@@ -79,7 +79,6 @@ int main(int argc, char* argv[]) {
 	
 	// compute the silhouette
 	auto pair = instant->compute_silhouette();
-	
 	// print the silhouette results
 	output << "\nSilhouette: [";
 	print::vector_print_infile(pair.first, &output);

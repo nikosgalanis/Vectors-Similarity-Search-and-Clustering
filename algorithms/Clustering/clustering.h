@@ -286,10 +286,10 @@ class Clustering {
 			// for each centroid 
 			for (int i = 0; i < k; i++) {
 				// for each one of its dimenions
-				for (int j = 0; j < space_dim; j++) {
+				for (int j = 0; j < (int)space_dim; j++) {
 					vector<T> current_component;
 					// parse through all of its assigned vectors in order to find the median
-					for (int n = 0; n < centroids_map.at(i).size(); n++) {
+					for (int n = 0; n < (int)centroids_map.at(i).size(); n++) {
 						current_component.push_back(centroids_map.at(i).at(n).at(j));
 					}
 					centroids.at(i).at(j) = our_math::median(current_component);

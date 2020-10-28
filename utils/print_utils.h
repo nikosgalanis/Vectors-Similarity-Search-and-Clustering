@@ -13,7 +13,7 @@ namespace print {
     template <typename T> 
     // print vector
     inline void vector_print(std::vector<T> vec) {
-        for (int i = 0; i < (uint64_t)vec.size(); i++) {
+        for (int i = 0; i < (int)vec.size(); i++) {
             cout << vec.at(i) << ' ';
         }
         cout << endl;
@@ -21,14 +21,14 @@ namespace print {
     template <typename T> 
     // print vector in filr
     inline void vector_print_infile(std::vector<T> vec, ofstream* out) {
-        for (int i = 0; i < (uint64_t)vec.size(); i++) {
+        for (int i = 0; i < (int)vec.size(); i++) {
             *out << vec.at(i) << ", ";
         }
     }
     // print vector and iterator
     template <typename T>
     inline void vector_it_print(std::vector<T> vec) {
-        for (int i = 0; i < (uint64_t)vec.size(); i++) {
+        for (int i = 0; i < (int)vec.size(); i++) {
             cout << "index " << i << ", value " << vec.at(i) << endl;
         }
         cout << endl;

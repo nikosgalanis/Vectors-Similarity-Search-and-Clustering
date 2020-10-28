@@ -23,7 +23,8 @@ int main(int argc, char* argv[]) {
 
     char* input_file = NULL, *query_file = NULL, *output_file = NULL;
 	int k, M, probes, n_neighbors, radius;
-	
+	double sum1 = 0, sum2 = 0;
+
 	parse_hc_args(argc, argv, &input_file, &output_file, &query_file, &k, &M, &probes, &n_neighbors, &radius);
 
     // parse the dataset in order to get a vector of our feature vector
@@ -113,6 +114,9 @@ int main(int argc, char* argv[]) {
 		
 		output << "\n\n\n";
 	}
+	cout << "mean lsh time " << sum1 / 1000 << endl;
+	cout << "mean bf time " << sum2 / 1000 << endl;
+
     cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
 
 	output.close();
