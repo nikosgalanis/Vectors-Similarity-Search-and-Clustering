@@ -45,7 +45,7 @@ vector<vector<double>> parse_input(string filename) {
 
 	double x;
 	// for each image start filling the vectors
-	for (int i = 0; i < 2000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		// create a vector to store our image data
 		vector<double> vec;
 		// store each byte of the image in the vector, by parsing boh of the image's dimensions

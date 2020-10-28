@@ -148,7 +148,7 @@ class Clustering {
 
 				// default lsh arguments
 				uint32_t m = pow(2,32) - 5;
-				uint32_t M = 256;
+				uint32_t M = n_points / 16;
 				uint32_t w = 10000;
 				
 				n_points = feature_vectors.size();
@@ -213,6 +213,7 @@ class Clustering {
 			}	
 			return centroids_map;
 		}
+		
 		// initialize our clusters using the init++ method
 		void initialization(void) {
 		// chose a first index randomly

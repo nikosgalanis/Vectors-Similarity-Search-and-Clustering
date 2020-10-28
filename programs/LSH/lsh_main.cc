@@ -39,15 +39,16 @@ int main(int argc, char* argv[]) {
 	ofstream output;
 	output.open(output_file);
 
-	// defalt lsh values, that we've learned for theory
-	uint64_t m = pow(2,32) - 5;
-	uint32_t M = pow(2,8);
-	uint32_t w = our_math::compute_w_value(feature_vectors, 1000);
-	uint32_t c = 1; 
-	int correct_computed = 0;
 	// lsh initialization values that we've learned from our dataset
 	int n_points = feature_vectors.size();
 	int space_dimension = feature_vectors.at(1).size();
+
+	// defalt lsh values, that we've learned for theory
+	uint64_t m = pow(2,32) - 5;
+	uint32_t M = n_points / 16;
+	uint32_t w = our_math::compute_w_value(feature_vectors, 1000);
+	uint32_t c = 1; 
+	int correct_computed = 0;
 	// initialize our LSH class with the deature vectors and the aprropriate given values
 	LSH<double> lsh_instant(L, m, M, n_points, k, space_dimension, w, feature_vectors);
 
