@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 	vector<vector<double>> items = parse_input("../../misc/datasets/train-images-idx3-ubyte");
 	vector<vector<double>> queries = parse_input("../../misc/querysets/t10k-images-idx3-ubyte");
 
-	Clustering<double> instant("reverse_Hypercube", items, 10, 300, 14, 20);
+	Clustering<double> instant("lloyds", items, 4);
     
     cout << "clustering algorithm began" << endl;
     instant.run_clustering();
@@ -71,6 +71,7 @@ int main(int argc, char* argv[]) {
     auto pair = instant.compute_silhouette();
     print::vector_print(pair.first);
     cout << "Total silhouette: " << pair.second << endl;
+
 
 	return 0;
 }

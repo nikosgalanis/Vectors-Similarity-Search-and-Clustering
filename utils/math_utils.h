@@ -4,6 +4,8 @@
 #include "print_utils.h"
 #include <bitset>
 #include <vector>
+#include <algorithm>
+#include <functional>
 
 /** 
  Mathematical functions that are usefull for our project
@@ -121,5 +123,13 @@ namespace our_math {
 			a.at(i) /= k;
 
 		return a;
+	}
+
+	template <typename T>
+	// find the median member of a vector
+	inline T median(vector <T> a) {
+		int median_index = a.size() / 2;
+		std::nth_element(a.begin(), a.begin() + median_index, a.end());
+		return a.at(median_index);
 	}
 }

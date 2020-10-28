@@ -66,9 +66,11 @@ class Clustering {
 			return nearest;
 		};
 
+		// compute the second nearest centroid of a vector. Needed for the silhouette algorithm
 		int second_nearest_centroid(vector <T> vec) {
 			// get the nearest centroid
 			int nearest = nearest_centroid(vec);
+
 			T min_dist = (T)INT_MAX;
 			int second_nearest = -1;
 			// compute the distances to all the centroids
@@ -84,6 +86,7 @@ class Clustering {
 
 			return second_nearest;
 		};
+
 		// compute how many unassigned vectors we've got, for the reverse assignement method
 		int count_unassigned(vector<int> assigned) {
 			int res = 0;
@@ -96,11 +99,11 @@ class Clustering {
 			return res;
 		}
 
-
+		// compute the minimum of the distances of the centroids. Needed for the initialization of the radius in reverse assignment
 		T min_dist_between_centroids() {
 			// initialize the min distance
 			T min_dist = (T)INT_MAX;
-
+			// brute force all the distances in order to find the smallest
 			for (int i = 0; i < k; i++) {
 				for (int j = 0; j < k; j++) {
 					if (i != j) {
@@ -110,6 +113,7 @@ class Clustering {
 					}
 				}
 			} 
+
 			return min_dist;
 		}
 
@@ -121,9 +125,9 @@ class Clustering {
 				cout << "Wrong assignment method selected";
 				exit(EXIT_FAILURE);
 			}
+			// initialize all the classs fields necessary
 			this->assignment_method = assignment_method;
 			n_points = feature_vectors.size();
-			cout << n_points << endl;
 			assert(n_points);
 			space_dim = feature_vectors.at(0).size();
 
@@ -139,6 +143,7 @@ class Clustering {
 					cout << "Wrong assignment method selected";
 					exit(EXIT_FAILURE);
 				}	
+				// initialize all the classs fields necessary
 				this->assignment_method = assignment_method;
 
 				// default lsh arguments
@@ -165,6 +170,7 @@ class Clustering {
 					cout << "Wrong assignment method selected";
 					exit(EXIT_FAILURE);
 				}	
+				// initialize all the classs fields necessary
 				this->assignment_method = assignment_method;
 
 				// default hypercube arguments
@@ -184,6 +190,7 @@ class Clustering {
 
 		// destructor for the clustering class
 		~Clustering(){
+			// free the pointers to the classes in case we have a reverse assignment method selected
 			if (assignment_method == "reverse_LSH") 
 				delete lsh_instant;
 			if (assignment_method == "reverse_Hypercube") 
@@ -196,8 +203,9 @@ class Clustering {
 			return this->centroids;
 		};
 
-		std::vector<int> get_assigned_centroid() {
-			return this->assigned_centroid;
+		// get the assigned centroid of a vector
+		std::vector<int> get_assigned_centroid(int vector_index) {
+			return this->assigned_centroid.at(vector_index);
 		};
 
 
@@ -208,7 +216,6 @@ class Clustering {
 		std::default_random_engine generator(mch());
 		std::uniform_int_distribution<int> distribution_int(0,n_points - 1);
 		int index = distribution_int(generator);
-		cout << index << endl;
 		// this is our first centroid
 		centroids.push_back(feature_vectors.at(index));
 			// find the other centroids with the algorithm init++
@@ -257,33 +264,31 @@ class Clustering {
 					r_index--;
 				}
 				assert(r_index > 0);
-				cout << r_index << endl;
 				// now the r_index has a correct value, so its our new centroid
 				centroids.push_back(feature_vectors.at(r_index));
 			}
 		}
 
-		// update the centroids
+		// update the centroids with the kmedian method
 		void update(void) {
-			// define the new centroids
-			for (int i = 0; i < k; i++) {
-				vector<T> a(space_dim, 0);
-				centroids.at(i) = a;
-			}
-			// keep track of how many vectors are currently assigned to each centroid
-			vector<int> n_assinged(k, 0);
-			// compute the sum of each vector assigned in every cluster
+			// we want to keep a map containing the true values of the vectors, in order to find the median
+			std::vector<std::vector<std::vector<T>>> centroids_map(k);
+			// insert the vectors in the map
 			for (int i = 0; i < n_points; i++) {
-				// find in which centroid the vector is assigned to
-				int index = assigned_centroid.at(i);
-				// update the centroid value
-				centroids.at(index) = our_math::add_vectors(centroids.at(index), feature_vectors.at(i));
-				// increase the assgined vectors in the current centroid
-				n_assinged.at(index)++;
+				int assigned = assigned_centroid.at(i);
+				centroids_map.at(assigned).push_back(feature_vectors.at(i));
 			}
-			// deivide each centroid so we can get the mean value
+			// for each centroid 
 			for (int i = 0; i < k; i++) {
-				centroids.at(i) = our_math::divide(centroids.at(i), n_assinged.at(i));
+				// for each one of its dimenions
+				for (int j = 0; j < space_dim; j++) {
+					vector<T> current_component;
+					// parse through all of its assigned vectors in order to find the median
+					for (int n = 0; n < centroids_map.at(i).size(); n++) {
+						current_component.push_back(centroids_map.at(i).at(n).at(j));
+					}
+					centroids.at(i).at(j) = our_math::median(current_component);
+				}
 			}
 		};
 
@@ -313,7 +318,7 @@ class Clustering {
 			int prev_unassigned = INT_MAX;
 			// keep track of unassinged points
 			int unassinged = INT_MAX - 1;
-
+			// break the loop when all the balls contain no new vectors
 			while (unassinged != prev_unassigned) {
 				// do a range search query for every centroid
 				for (int i = 0; i < k; i++) {
@@ -363,8 +368,6 @@ class Clustering {
 				// check for changes
 				if (assigned_centroid.at(i) != new_assigned.at(i))
 					changes++;
-
-				// assigned_centroid.at(i) =  new_assigned.at(i);
 			}
 
 			// update the assigned vector
@@ -382,16 +385,6 @@ class Clustering {
 				centroids_map.at(assigned_centroid.at(i)).push_back(i);
 			}
 
-			double** distances = new double*[n_points];
-
-			for(int i = 0; i < n_points; ++i)
-				distances[i] = new double[n_points];
-			
-			for (int i = 0; i < n_points; i++) {
-				for (int j = 0; j < n_points; j++) {
-
-				}
-			}
 			// declare a vector of each cluster's silhouette
 			vector<double> silhouettes(k, 0);
 
@@ -424,6 +417,7 @@ class Clustering {
 
 				// add it to the total silhouette
 				total_sil += sil;
+				//TODO: Delete, just for checking
 				if (i % 100 == 0)
 					cout << i << endl;
 			}
@@ -457,7 +451,7 @@ class Clustering {
 					changed = assignment_lloyds();
 				else 
 					changed = reverse_assignment();
-
+			
 				// Step 3: Update the centroids
 				update();
 				cout << "changed " << changed << endl;
