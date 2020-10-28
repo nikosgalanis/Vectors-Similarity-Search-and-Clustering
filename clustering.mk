@@ -24,4 +24,4 @@ $(CL_EXEC_DIR)/$(CL_TARGET_EXEC): $(CL_OBJS)
 # cc source
 $(CL_BUILD_DIR)/%.cc.o: %.cc $(CL_HEADS)
 	@$(MKDIR_P) $(dir $@)
-	@$(CC) -c $(CL_FLAGS) $< -o $@ -lm
+	@$(CC) -c $(CC_FLAGS) $< -o $@ -lm
