@@ -21,37 +21,10 @@ using namespace std::chrono;
 int main(int argc, char* argv[]) {
     // parsing the arguments
 
-    char* input_file, *query_file, *output_file;
-	int k = 14, M = 10, probes = 2, n_neighbors = 1, radius = 10000;
-	for (int i = 1; i < argc; i++) {
-		if (!strcmp(argv[i], "-d")) {
-			input_file = strdup(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-q")) {
-			query_file = strdup(argv[++i]);
-		}	
-		if (!strcmp(argv[i], "-o")) {
-			output_file = strdup(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-k")) {
-			k = atoi(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-M")) {
-			M = atoi(argv[++i]);
-		}
-        if (!strcmp(argv[i], "-probes")) {
-			probes = atoi(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-N")) {
-			n_neighbors = atoi(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-R")) {
-			radius = atoi(argv[++i]);
-		}
-	}
-
-    assert(input_file && query_file && output_file
-		&& k && M && probes && n_neighbors && radius);
+    char* input_file = NULL, *query_file = NULL, *output_file = NULL;
+	int k, M, probes, n_neighbors, radius;
+	
+	parse_hc_args(argc, argv, &input_file, &output_file, &query_file, &k, &M, &probes, &n_neighbors, &radius);
 
     // parse the dataset in order to get a vector of our feature vector
 	vector<vector<double>> feature_vectors = parse_input(input_file);
@@ -141,6 +114,8 @@ int main(int argc, char* argv[]) {
 		output << "\n\n\n";
 	}
     cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
+
+	output.close();
 
 	free(input_file);
 	free(query_file);

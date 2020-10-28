@@ -3,6 +3,9 @@
 #include <string>
 #include <list> 
 #include <vector> 
+#include <cstring>
+#include <assert.h>
+
 
 #include "../../utils/math_utils.h"
 #include "io_utils.h"
@@ -42,7 +45,7 @@ vector<vector<double>> parse_input(string filename) {
 
 	double x;
 	// for each image start filling the vectors
-	for (int i = 0; i < n_of_images; i++) {
+	for (int i = 0; i < 2000; i++) {
 		// create a vector to store our image data
 		vector<double> vec;
 		// store each byte of the image in the vector, by parsing boh of the image's dimensions
@@ -60,6 +63,155 @@ vector<vector<double>> parse_input(string filename) {
 		// push the vector in our list
 		list_of_vectors.push_back(vec);
 	}
+	
+	input.close();
 	// return the list of vectors that we created
 	return list_of_vectors;
 }
+
+
+void parse_lsh_args(int argc, char* argv[], char** input, char** output,
+	char** query, int* k, int* L, int* n_neighs, int* radius) {
+		// default arguments
+		*k = 4; *L = 5; *n_neighs = 1; *radius = 10000;
+		// parse through comand line arguments
+		for (int i = 1; i < argc; i++) {
+			if (!strcmp(argv[i], "-d")) {
+				*input = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-q")) {
+				*query = strdup(argv[++i]);
+			}	
+			if (!strcmp(argv[i], "-o")) {
+				*output = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-k")) {
+				*k = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-L")) {
+				*L = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-N")) {
+				*n_neighs = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-R")) {
+				*radius = atoi(argv[++i]);
+			}
+		}
+		assert(*input && *query && *output);
+	} 
+
+void parse_hc_args(int argc, char* argv[], char** input, char** output,
+	char** query, int* k, int* M, int* probes, int* n_neighs, int* radius) {
+		// default arguments
+		*k = 14; *M = 10; *probes = 2; *n_neighs = 1; *radius = 10000;
+		// parse through comand line arguments
+		for (int i = 1; i < argc; i++) {
+			if (!strcmp(argv[i], "-d")) {
+				*input = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-q")) {
+				*query = strdup(argv[++i]);
+			}	
+			if (!strcmp(argv[i], "-o")) {
+				*output = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-k")) {
+				*k = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-M")) {
+				*M = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-probes")) {
+				*probes = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-N")) {
+				*n_neighs = atoi(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-R")) {
+				*radius = atoi(argv[++i]);
+			}
+		}
+		assert(*input && *query && *output);
+	}
+
+void parse_clustering_args(int argc, char* argv[], char** input,
+	char** output, char** config, bool* complete, char** method) {
+		// default arguments
+		*complete = false;
+		// parse through comand line arguments
+		for (int i = 1; i < argc; i++) {
+			if (!strcmp(argv[i], "-i")) {
+				*input = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-c")) {
+				*config = strdup(argv[++i]);
+			}	
+			if (!strcmp(argv[i], "-o")) {
+				*output = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-m")) {
+				*method = strdup(argv[++i]);
+			}
+			if (!strcmp(argv[i], "-complete")) {
+				*complete = true;
+			}
+		}
+		assert(*input && *config && *output && *method);
+	}
+
+void parse_clustering_config(char* file, int* k, int* l_lsh, int* k_lsh,
+	int* M_hc, int* k_hc, int* probes_hc) {
+		// default arguments
+		*l_lsh = 3; *k_lsh = 4; *M_hc = 10; *k_hc = 3; *probes_hc = 2;
+		// open the config file 
+		ifstream config;
+		config.open(file);
+		char data[100];
+		// garbage for k
+		config >> data;
+
+		config >> data;
+		*k = atoi(data);
+
+		if (! config.eof()) {
+			// garbage
+			config >> data;
+
+			config >> data;
+			*l_lsh = atoi(data);
+		}
+
+		if (! config.eof()) {
+			// garbage
+			config >> data;
+
+			config >> data;
+			*k_lsh = atoi(data);
+		}
+
+		if (! config.eof()) {
+			// garbage
+			config >> data;
+
+			config >> data;
+			*M_hc = atoi(data);
+		}
+
+		if (! config.eof()) {
+			// garbage
+			config >> data;
+
+			config >> data;
+			*k_hc = atoi(data);
+		}
+
+		if (! config.eof()) {
+			// garbage
+			config >> data;
+
+			config >> data;
+			*probes_hc = atoi(data);
+		}
+		config.close();
+	}

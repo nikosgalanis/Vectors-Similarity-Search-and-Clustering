@@ -43,8 +43,8 @@ clean_cluster:
 # Default Arguments for path I am in
 LSH_ARGS  = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 4 -L 4 -o executables/lsh/lsh_out -N 1 -R 10000
 CUBE_ARGS = -d misc/datasets/train-images-idx3-ubyte  -q misc/querysets/t10k-images-idx3-ubyte -k 14 -M 10 -probes 2 -o executables/hypercube/cube_out -N 1 -R 10000
-CLUSTER_LLOYDS_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_out -m Lloyds
-CLUSTER_LLOYDS_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_complete_out -complete -m Lloyds
+CLUSTER_LLOYDS_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_out -m Lloyds 
+CLUSTER_LLOYDS_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lloyds_complete_out -complete -m Lloyds 
 CLUSTER_LSH_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lsh_out -m Range_Search_LSH
 CLUSTER_LSH_COMPLETE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_lsh_complete_out -complete -m Range_Search_LSH
 CLUSTER_CUBE_ARGS = -i misc/datasets/train-images-idx3-ubyte -c config/cluster.conf -o executables/clustering/cluster_cube_out -m Range_Search_Hypercube

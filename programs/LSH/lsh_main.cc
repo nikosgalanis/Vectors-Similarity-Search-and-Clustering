@@ -20,34 +20,12 @@ using namespace std::chrono;
 
 int main(int argc, char* argv[]) {
 	// first step: parse the arguments
-	char* input_file, *query_file, *output_file;
-	int k = 4, L = 5, n_neighbors = 1, radius = 10000;
-	for (int i = 1; i < argc; i++) {
-		if (!strcmp(argv[i], "-d")) {
-			input_file = strdup(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-q")) {
-			query_file = strdup(argv[++i]);
-		}	
-		if (!strcmp(argv[i], "-o")) {
-			output_file = strdup(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-k")) {
-			k = atoi(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-L")) {
-			L = atoi(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-N")) {
-			n_neighbors = atoi(argv[++i]);
-		}
-		if (!strcmp(argv[i], "-R")) {
-			radius = atoi(argv[++i]);
-		}
-	}
-	assert(input_file && query_file && output_file
-		&& k && L && n_neighbors && radius);
-
+	char* input_file = NULL, *query_file = NULL, *output_file = NULL;
+	int k, L, n_neighbors, radius;
+	
+	// parse the comand line arguments given
+	parse_lsh_args(argc, argv, &input_file, &output_file, &query_file,
+	&k, &L, &n_neighbors, &radius);
 	// parse the dataset in order to get a vector of our feature vector
 	vector<vector<double>> feature_vectors = parse_input(input_file);
 
@@ -136,6 +114,8 @@ int main(int argc, char* argv[]) {
 	}
 	cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
 
+	output.close();
+	
 	free(input_file);
 	free(query_file);
 	free(output_file);

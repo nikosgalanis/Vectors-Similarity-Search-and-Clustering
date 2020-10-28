@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <fstream>
+
 
 /**
 Print functions
@@ -16,7 +18,13 @@ namespace print {
         }
         cout << endl;
     }
-
+    template <typename T> 
+    // print vector in filr
+    inline void vector_print_infile(std::vector<T> vec, ofstream* out) {
+        for (int i = 0; i < (uint64_t)vec.size(); i++) {
+            *out << vec.at(i) << ", ";
+        }
+    }
     // print vector and iterator
     template <typename T>
     inline void vector_it_print(std::vector<T> vec) {

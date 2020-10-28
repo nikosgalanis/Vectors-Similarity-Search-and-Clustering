@@ -122,7 +122,7 @@ class Clustering {
 		Clustering(std::string assignment_method, std::vector<std::vector<T>> feature_vectors, uint32_t k)
 		: feature_vectors(feature_vectors), k(k) {
 			if (assignment_method != "lloyds") {
-				cout << "Wrong assignment method selected";
+				cout << "Wrong assignment method selected\n";
 				exit(EXIT_FAILURE);
 			}
 			// initialize all the classs fields necessary
@@ -140,7 +140,7 @@ class Clustering {
 		Clustering(std::string assignment_method, std::vector<std::vector<T>> feature_vectors,
 			uint32_t k, uint32_t lsh_l, uint32_t lsh_k): feature_vectors(feature_vectors), k(k), lsh_l(lsh_l), lsh_k(lsh_k) {
 				if (assignment_method != "reverse_LSH") {
-					cout << "Wrong assignment method selected";
+					cout << "Wrong assignment method selected\n";
 					exit(EXIT_FAILURE);
 				}	
 				// initialize all the classs fields necessary
@@ -167,7 +167,7 @@ class Clustering {
 			uint32_t hc_M, uint32_t hc_k, uint32_t hc_probes): feature_vectors(feature_vectors), k(k),
 			hc_M(hc_M), hc_k(hc_k), hc_probes(hc_probes) {
 				if (assignment_method != "reverse_Hypercube") {
-					cout << "Wrong assignment method selected";
+					cout << "Wrong assignment method selected\n";
 					exit(EXIT_FAILURE);
 				}	
 				// initialize all the classs fields necessary
@@ -203,12 +203,16 @@ class Clustering {
 			return this->centroids;
 		};
 
-		// get the assigned centroid of a vector
-		std::vector<int> get_assigned_centroid(int vector_index) {
-			return this->assigned_centroid.at(vector_index);
-		};
-
-
+		std::vector<std::vector<int>> get_centroids_map() {
+			// we want to keep a map containing the true values of the vectors, in order to find the median
+			std::vector<std::vector<int>> centroids_map(k);
+			// insert the vectors in the map
+			for (int i = 0; i < n_points; i++) {
+				int assigned = assigned_centroid.at(i);
+				centroids_map.at(assigned).push_back(i);
+			}	
+			return centroids_map;
+		}
 		// initialize our clusters using the init++ method
 		void initialization(void) {
 		// chose a first index randomly
@@ -417,10 +421,8 @@ class Clustering {
 
 				// add it to the total silhouette
 				total_sil += sil;
-				//TODO: Delete, just for checking
-				if (i % 100 == 0)
-					cout << i << endl;
 			}
+
 			// compute the final value of the silhouette for each cluster
 			for (int i = 0; i < k; i++) {
 				silhouettes.at(i) /= assigned.at(i);
@@ -454,7 +456,6 @@ class Clustering {
 			
 				// Step 3: Update the centroids
 				update();
-				cout << "changed " << changed << endl;
 			}
 		}
 };
