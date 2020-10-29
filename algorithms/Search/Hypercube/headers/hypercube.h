@@ -19,7 +19,7 @@ template <typename T>
 class Hypercube {
 	private:
 		const uint32_t k; // number of hash functions that we are going to use -> size of hypercube
-		uint32_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
+		uint64_t m; // constant that denotes an operation in the hash fn. Typically 2^32 - 5
 		uint32_t threshold; // max elements to be checked during the algorithm
 		uint32_t max_probes; // max probes of the hypercube to be checked during search
 		uint32_t n_points; // number of points to be hashed initially
@@ -42,13 +42,14 @@ class Hypercube {
 	public:
 
 		// Class constructor
-		Hypercube(const uint32_t k, uint32_t m, uint32_t threshold, uint32_t max_probes, 
+		Hypercube(const uint32_t k, uint64_t m, uint32_t threshold, uint32_t max_probes, 
 		uint32_t n_points, uint32_t w, uint32_t space_dim, std::vector<std::vector<T>> init_vectors) : 
 		k(k), m(m), threshold(threshold), max_probes(max_probes), n_points(n_points), 
 		w(w), space_dim(space_dim), feature_vectors(init_vectors) {
 			//measure the time that it takes to initialize the hypercube
 			time_t start, finish;
-			fprintf(stdout, "Hypercube initialization began\n");
+			fprintf(stdout, "Hypercube initialization with parameters: k = %d, m = %ld, threshold = %d"
+			" max_probes = %d, npoints = %d, w = %d, spacedim = %d\n", k, m, threshold, max_probes, n_points, w, space_dim);
 			time(&start);
 
 			// we have a bit swquence of k bits, thus the size of the hypercube table will be 2^k
@@ -257,8 +258,6 @@ class Hypercube {
 					kth_min_distance = distance;
 					result.push_back(new_pair);
 				} else {
-					cout << "size " << result.size() << endl;
-					cout << "knearest problem" << endl;
 					exit(EXIT_FAILURE);
 				}
 
@@ -336,8 +335,6 @@ class Hypercube {
 								kth_min_distance = distance;
 								result.push_back(new_pair);
 							} else {
-								cout << "size " << result.size() << endl;
-								cout << "knearest problem" << endl;
 								exit(EXIT_FAILURE);
 							}
 

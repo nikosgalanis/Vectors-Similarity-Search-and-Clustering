@@ -231,7 +231,6 @@ class Clustering {
 				vector<T> P(n_points, 0);
 				// for every point
 				for (int i = 0; i < n_points; i++) {
-					// cout << "i = " << i << endl;
 					// check if it is centroid
 					vector<T> curr = feature_vectors.at(i);
 					if (std::find(centroids.begin(), centroids.end(), curr) == centroids.end()) {
@@ -457,7 +456,6 @@ class Clustering {
 			
 				// Step 3: Update the centroids
 				update();
-				cout << "changed " << changed << endl; 
 			}
 		}
 };

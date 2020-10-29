@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 
     // default hypercube values
     uint64_t m = pow(2,32) - 5;
-    uint32_t w = 10 * our_math::compute_w_value(feature_vectors, 1000);
+    uint32_t w = 20 * our_math::compute_w_value(feature_vectors, 1000);
 	uint32_t c = 1; 
 
     int correct_computed = 0;
@@ -102,6 +102,8 @@ int main(int argc, char* argv[]) {
 		// Print the time elapsed while computing the neighbors with kNN and BF
 		output << "tHC: " << hc_time_span.count() << endl;
 		output << "tTrue: " << bf_time_span.count() << endl;
+		sum1 += hc_time_span.count();
+		sum2 += bf_time_span.count();
 
 		// RUn the Range Search algorithm
 		list<pair<int, double>> range_search = hypercube_instant.RangeSearch(query_vectors.at(i), radius, c);
@@ -114,8 +116,8 @@ int main(int argc, char* argv[]) {
 		
 		output << "\n\n\n";
 	}
-	cout << "mean lsh time " << sum1 / 1000 << endl;
-	cout << "mean bf time " << sum2 / 1000 << endl;
+	cout << "mean hc time " << sum1 / query_vectors.size() << endl;
+	cout << "mean bf time " << sum2 / query_vectors.size() << endl;
 
     cout << "corectly computed neighbours " << correct_computed  << " out of " << n_neighbors * query_vectors.size() << endl;
 
