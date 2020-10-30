@@ -9,7 +9,7 @@ In our case, we have a large set of images, which are represented as a vector of
 -   A programs that performs Clustering given a dataset.
 
 
-The nearest neighbor problem is solved using an approximate approach, as well as a brute force one. In the approximate, we are trying to predict the NN, by applying 2 different algorithms: __Locality Sensitive Hashing__ and __Random Projections to the Hypercube__. We compare our timing results and our predictions with the Brute Force model, in order to find out how well do our algorithms perform. In order to test the program, we use the MNIST dataset, that contains pictures as vectors, of size $28\times28$
+The nearest neighbor problem is solved using an approximate approach, as well as a brute force one. In the approximate, we are trying to predict the NN, by applying 2 different algorithms: __Locality Sensitive Hashing__ and __Random Projections to the Hypercube__. We compare our timing results and our predictions with the Brute Force model, in order to find out how well do our algorithms perform. In order to test the program, we use the MNIST dataset, that contains pictures as vectors, of size 28x28.
 
 The clustering problem is solved using a variety of algorithms. During the initialization stage we implement ___k-means__, during the update step we implement __k-median__, and during the assignment we implement direct assignment using the __Lloyd's algorithm__, as well as reverse assignment using the __LSH__ and __Hypercube__ Range Search that we implemented earlier.
 
