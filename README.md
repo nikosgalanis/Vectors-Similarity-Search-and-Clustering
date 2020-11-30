@@ -38,3 +38,8 @@ We can delete these directories by using __make clean__.
 
 This project is licensed under the MIT License - see the [LICENSE](/LICENCE) file for details
 
+## Contributors
+
+[Nikos Galanis](https://github.com/nikosgalanis) \
+[Sofoklis Strompolas](https://github.com/SofoSt/)
+
